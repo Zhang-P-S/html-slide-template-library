@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qwen3 Embedding 论文汇报</title>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===========================================
+         THEME TOKENS
+         章谱生 T3: 浅蓝工程路演
+         =========================================== */
+      :root {
+        --bg-primary: #eaf6fd;
+        --bg-secondary: #d7eefb;
+        --bg-panel: rgba(255, 255, 255, 0.82);
+        --bg-panel-strong: rgba(255, 255, 255, 0.94);
+        --bg-dark: #183f72;
+        --bg-dark-2: #24588f;
+        --text-primary: #12253f;
+        --text-secondary: #40617f;
+        --text-light: #f5fbff;
+        --line: rgba(34, 83, 133, 0.18);
+        --accent: #d53935;
+        --accent-soft: rgba(213, 57, 53, 0.12);
+        --accent-2: #2e67a3;
+        --accent-3: #8eb6d8;
+        --shadow: 0 24px 54px rgba(32, 88, 140, 0.15);
+        --font-display: "Noto Sans SC", sans-serif;
+        --font-body: "Noto Sans SC", sans-serif;
+        --font-mono: "Rajdhani", sans-serif;
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --duration-normal: 0.7s;
+      }
+
+      /* ===========================================
+         RESET
+         =========================================== */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ===========================================
+         VIEWPORT FITTING: MANDATORY BASE STYLES
+         Include this ENTIRE file in every presentation.
+         These styles ensure slides fit exactly in the viewport.
+         =========================================== */
+
+      /* 1. Lock html/body to viewport */
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
+
+      /* 2. Each slide = exact viewport height */
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile browsers */
+        overflow: hidden; /* CRITICAL: Prevent ANY overflow */
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* 3. Content container with flex for centering */
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden; /* Double-protection against overflow */
+        padding: var(--slide-padding);
+      }
+
+      /* 4. ALL typography uses clamp() for responsive scaling */
+      :root {
+        /* Titles scale from mobile to desktop */
+        --title-size: clamp(1.5rem, 5vw, 4rem);
+        --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+        --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+
+        /* Body text */
+        --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+        --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+        /* Spacing scales with viewport */
+        --slide-padding: clamp(1rem, 4vw, 4rem);
+        --content-gap: clamp(0.5rem, 2vw, 2rem);
+        --element-gap: clamp(0.25rem, 1vw, 1rem);
+      }
+
+      /* 5. Cards/containers use viewport-relative max sizes */
+      .card,
+      .container,
+      .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+      }
+
+      /* 6. Lists auto-scale with viewport */
+      .feature-list,
+      .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+      }
+
+      .feature-list li,
+      .bullet-list li {
+        font-size: var(--body-size);
+        line-height: 1.4;
+      }
+
+      /* 7. Grids adapt to available space */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+      }
+
+      /* 8. Images constrained to viewport */
+      img,
+      .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+      }
+
+      /* ===========================================
+         RESPONSIVE BREAKPOINTS
+         Aggressive scaling for smaller viewports
+         =========================================== */
+
+      /* Short viewports (< 700px height) */
+      @media (max-height: 700px) {
+        :root {
+          --slide-padding: clamp(0.75rem, 3vw, 2rem);
+          --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+          --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+          --h2-size: clamp(1rem, 3vw, 1.75rem);
+        }
+      }
+
+      /* Very short viewports (< 600px height) */
+      @media (max-height: 600px) {
+        :root {
+          --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+          --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+          --title-size: clamp(1.1rem, 4vw, 2rem);
+          --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        }
+
+        /* Hide non-essential elements */
+        .nav-dots,
+        .keyboard-hint,
+        .decorative {
+          display: none;
+        }
+      }
+
+      /* Extremely short (landscape phones, < 500px height) */
+      @media (max-height: 500px) {
+        :root {
+          --slide-padding: clamp(0.4rem, 2vw, 1rem);
+          --title-size: clamp(1rem, 3.5vw, 1.5rem);
+          --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+          --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+      }
+
+      /* Narrow viewports (< 600px width) */
+      @media (max-width: 600px) {
+        :root {
+          --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        /* Stack grids vertically */
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===========================================
+         REDUCED MOTION
+         Respect user preferences
+         =========================================== */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.2s !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* ===========================================
+         BASE DOCUMENT STYLING
+         =========================================== */
+      body {
+        font-family: var(--font-body);
+        color: var(--text-primary);
+        background: var(--bg-primary);
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent), #ff7b57);
+        z-index: 1000;
+        transition: width 0.2s ease;
+      }
+
+      .nav-dots {
+        position: fixed;
+        right: clamp(0.75rem, 1.8vw, 1.5rem);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        z-index: 1000;
+      }
+
+      .nav-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        border: 1px solid rgba(24, 63, 114, 0.25);
+        background: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition:
+          transform 0.25s ease,
+          background 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      .nav-dot.active {
+        transform: scale(1.2);
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.58) 1px, transparent 1px),
+          linear-gradient(rgba(255, 255, 255, 0.58) 1px, transparent 1px);
+        background-size: 3rem 3rem;
+        opacity: 0.18;
+        pointer-events: none;
+      }
+
+      .slide::after {
+        content: "";
+        position: absolute;
+        inset: clamp(0.8rem, 2vw, 1.4rem);
+        border: 1px solid rgba(23, 75, 122, 0.12);
+        pointer-events: none;
+      }
+
+      .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: clamp(0.75rem, 1.8vw, 1.4rem);
+        position: relative;
+        z-index: 2;
+      }
+
+      .eyebrow {
+        font-family: var(--font-mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: clamp(0.72rem, 1.1vw, 0.95rem);
+        color: var(--accent-2);
+      }
+
+      .slide-number {
+        font-family: var(--font-mono);
+        font-size: clamp(0.8rem, 1.2vw, 1rem);
+        color: rgba(18, 37, 63, 0.4);
+      }
+
+      .title {
+        font-size: var(--title-size);
+        line-height: 1.05;
+        font-weight: 800;
+        font-family: var(--font-display);
+      }
+
+      .subtitle {
+        font-size: clamp(0.95rem, 1.7vw, 1.35rem);
+        color: var(--text-secondary);
+        line-height: 1.45;
+        max-width: 60ch;
+      }
+
+      .section-title {
+        font-size: var(--h2-size);
+        line-height: 1.1;
+        font-weight: 800;
+        font-family: var(--font-display);
+        margin-bottom: clamp(0.6rem, 1vw, 0.8rem);
+      }
+
+      .section-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: var(--font-mono);
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: clamp(0.75rem, 1vw, 0.9rem);
+        margin-bottom: clamp(0.5rem, 1vw, 0.85rem);
+      }
+
+      .section-kicker::before {
+        content: "";
+        width: 2.25rem;
+        height: 2px;
+        background: var(--accent);
+      }
+
+      .hero-grid,
+      .two-column,
+      .benchmark-grid,
+      .summary-grid {
+        display: grid;
+        gap: clamp(1rem, 1.8vw, 1.4rem);
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-grid,
+      .two-column {
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: stretch;
+      }
+
+      .panel {
+        background: var(--bg-panel);
+        border: 1px solid rgba(36, 88, 143, 0.12);
+        border-radius: 1.2rem;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .panel-strong {
+        background: var(--bg-panel-strong);
+      }
+
+      .panel-pad {
+        padding: clamp(1rem, 1.8vw, 1.5rem);
+      }
+
+      .hero-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: clamp(0.8rem, 1.4vw, 1.2rem);
+      }
+
+      .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .hero-badge {
+        padding: 0.58rem 0.9rem;
+        border-radius: 999px;
+        border: 1px solid rgba(36, 88, 143, 0.16);
+        background: rgba(255, 255, 255, 0.75);
+        font-size: clamp(0.76rem, 1vw, 0.92rem);
+        color: var(--text-secondary);
+      }
+
+      .thesis-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+        padding: clamp(1rem, 1.8vw, 1.4rem);
+      }
+
+      .thesis-index {
+        width: clamp(3rem, 5vw, 4.2rem);
+        height: clamp(3rem, 5vw, 4.2rem);
+        border-radius: 1rem;
+        background: linear-gradient(135deg, var(--bg-dark), var(--bg-dark-2));
+        color: var(--text-light);
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-size: clamp(1.25rem, 2vw, 1.8rem);
+        font-weight: 700;
+      }
+
+      .thesis-text strong {
+        display: block;
+        font-size: clamp(1rem, 1.65vw, 1.35rem);
+        margin-bottom: 0.25rem;
+      }
+
+      .thesis-text span {
+        color: var(--text-secondary);
+        line-height: 1.5;
+        font-size: var(--body-size);
+      }
+
+      .hero-right {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: clamp(1rem, 1.5vw, 1.2rem);
+      }
+
+      .scoreboard {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .score-card {
+        padding: 1rem;
+        border-radius: 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(221, 239, 248, 0.78));
+        border: 1px solid rgba(36, 88, 143, 0.12);
+      }
+
+      .score-card .label {
+        font-size: clamp(0.75rem, 0.95vw, 0.88rem);
+        color: var(--text-secondary);
+      }
+
+      .score-card .value {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+        margin-top: 0.3rem;
+        color: var(--bg-dark);
+      }
+
+      .orbital {
+        position: relative;
+        min-height: 0;
+        border-radius: 1.4rem;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.78), transparent 34%),
+          radial-gradient(circle at 80% 20%, rgba(213, 57, 53, 0.14), transparent 26%),
+          radial-gradient(circle at 78% 72%, rgba(46, 103, 163, 0.16), transparent 30%),
+          linear-gradient(145deg, #edf8fe, #dceffd);
+      }
+
+      .orbital::before,
+      .orbital::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid rgba(46, 103, 163, 0.24);
+      }
+
+      .orbital::before {
+        width: 16rem;
+        height: 16rem;
+        right: 8%;
+        top: 14%;
+      }
+
+      .orbital::after {
+        width: 11rem;
+        height: 11rem;
+        right: 23%;
+        top: 28%;
+      }
+
+      .orbital-inner {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 1.5rem;
+      }
+
+      .orbital-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0.25rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        font-size: clamp(0.72rem, 0.95vw, 0.88rem);
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(36, 88, 143, 0.1);
+      }
+
+      .bullet-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .bullet-list li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.75rem;
+        align-items: start;
+        color: var(--text-primary);
+      }
+
+      .bullet-list li::before {
+        content: "";
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 0.15rem;
+        margin-top: 0.38rem;
+        background: linear-gradient(180deg, var(--accent), #f0725f);
+        box-shadow: 0 0 0 0.25rem var(--accent-soft);
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .mini-card {
+        padding: 0.9rem 1rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(36, 88, 143, 0.12);
+      }
+
+      .mini-card h4 {
+        font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+        margin-bottom: 0.3rem;
+      }
+
+      .mini-card p {
+        color: var(--text-secondary);
+        font-size: clamp(0.72rem, 0.98vw, 0.88rem);
+        line-height: 1.45;
+      }
+
+      .image-frame {
+        overflow: hidden;
+        border-radius: 1.2rem;
+        border: 1px solid rgba(36, 88, 143, 0.14);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .image-frame img {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        object-fit: cover;
+        display: block;
+      }
+
+      .image-caption {
+        padding: 0.8rem 1rem;
+        font-size: clamp(0.7rem, 0.95vw, 0.86rem);
+        color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.94);
+      }
+
+      .benchmark-grid {
+        grid-template-columns: 1fr 0.95fr;
+        align-items: stretch;
+      }
+
+      .chart-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .chart-row {
+        display: grid;
+        grid-template-columns: 8rem 1fr auto;
+        gap: 0.9rem;
+        align-items: center;
+      }
+
+      .chart-label {
+        font-size: clamp(0.78rem, 1vw, 0.92rem);
+        color: var(--text-secondary);
+      }
+
+      .chart-track {
+        position: relative;
+        height: 1.05rem;
+        border-radius: 999px;
+        background: rgba(36, 88, 143, 0.08);
+        overflow: hidden;
+      }
+
+      .chart-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        border-radius: 999px;
+      }
+
+      .chart-fill.qwen8 {
+        background: linear-gradient(90deg, var(--bg-dark), var(--accent-2));
+      }
+
+      .chart-fill.qwen4 {
+        background: linear-gradient(90deg, #5a8dc2, #7eb2dd);
+      }
+
+      .chart-fill.qwen06 {
+        background: linear-gradient(90deg, #7ea6cb, #b8d2e8);
+      }
+
+      .chart-fill.base {
+        background: linear-gradient(90deg, #f0b8a8, #d88b77);
+      }
+
+      .chart-value {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        color: var(--bg-dark);
+      }
+
+      .metric-stack {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .metric-highlight {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.9rem;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: linear-gradient(150deg, rgba(255, 255, 255, 0.94), rgba(239, 248, 254, 0.82));
+        border: 1px solid rgba(36, 88, 143, 0.12);
+      }
+
+      .metric-no {
+        width: 2.8rem;
+        height: 2.8rem;
+        border-radius: 0.9rem;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-weight: 700;
+      }
+
+      .benchmark-note {
+        font-size: clamp(0.72rem, 0.95vw, 0.86rem);
+        color: var(--text-secondary);
+        line-height: 1.55;
+      }
+
+      .ablation-grid {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: clamp(1rem, 1.8vw, 1.5rem);
+      }
+
+      .ladder {
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .ladder-step {
+        padding: 0.9rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(36, 88, 143, 0.1);
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .ladder-step strong {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+      }
+
+      .ladder-step span {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--text-secondary);
+        font-size: clamp(0.72rem, 0.95vw, 0.88rem);
+      }
+
+      .step-final {
+        background: linear-gradient(135deg, rgba(24, 63, 114, 0.95), rgba(37, 88, 143, 0.95));
+        color: var(--text-light);
+      }
+
+      .step-final span,
+      .step-final .chart-value {
+        color: rgba(245, 251, 255, 0.82);
+      }
+
+      .deploy-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .deploy-card {
+        position: relative;
+        padding: 1rem 1rem 1.15rem;
+        border-radius: 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(232, 244, 252, 0.84));
+        border: 1px solid rgba(36, 88, 143, 0.1);
+      }
+
+      .deploy-card h4 {
+        font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+        margin-bottom: 0.3rem;
+      }
+
+      .deploy-card small {
+        color: var(--text-secondary);
+        font-size: clamp(0.72rem, 0.95vw, 0.84rem);
+      }
+
+      .deploy-card ul {
+        list-style: none;
+        margin-top: 0.75rem;
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .deploy-card li {
+        font-size: clamp(0.74rem, 0.96vw, 0.9rem);
+        color: var(--text-primary);
+      }
+
+      .deploy-card li::before {
+        content: "• ";
+        color: var(--accent);
+      }
+
+      .closing {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+
+      .takeaway-stack {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .takeaway {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.85rem;
+        align-items: start;
+        padding: 0.9rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(36, 88, 143, 0.1);
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .takeaway-index {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.7rem;
+        display: grid;
+        place-items: center;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-weight: 700;
+      }
+
+      .source-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 0;
+      }
+
+      .source-box .source-meta {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-size: clamp(0.78rem, 1vw, 0.95rem);
+      }
+
+      .source-title {
+        font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+        line-height: 1.35;
+        font-weight: 700;
+      }
+
+      .source-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(36, 88, 143, 0.12);
+        font-size: clamp(0.72rem, 0.95vw, 0.86rem);
+      }
+
+      .footer-note {
+        position: absolute;
+        left: var(--slide-padding);
+        right: var(--slide-padding);
+        bottom: clamp(0.6rem, 1vw, 0.9rem);
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        z-index: 2;
+        color: rgba(18, 37, 63, 0.46);
+        font-size: clamp(0.65rem, 0.86vw, 0.8rem);
+      }
+
+      /* ===========================================
+         ANIMATIONS
+         =========================================== */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .reveal-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .reveal-scale {
+        opacity: 0;
+        transform: scale(0.92);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .slide.visible .reveal,
+      .slide.visible .reveal-left,
+      .slide.visible .reveal-scale {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+
+      .reveal:nth-child(1) {
+        transition-delay: 0.08s;
+      }
+      .reveal:nth-child(2) {
+        transition-delay: 0.16s;
+      }
+      .reveal:nth-child(3) {
+        transition-delay: 0.24s;
+      }
+      .reveal:nth-child(4) {
+        transition-delay: 0.32s;
+      }
+
+      .slide-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(0.45rem, 0.9vw, 0.7rem);
+        margin-bottom: clamp(0.6rem, 1vw, 0.9rem);
+        position: relative;
+        z-index: 2;
+      }
+
+      /* ===========================================
+         MOBILE LAYOUT OVERRIDES
+         =========================================== */
+      @media (max-width: 960px) {
+        .hero-grid,
+        .two-column,
+        .benchmark-grid,
+        .ablation-grid,
+        .closing {
+          grid-template-columns: 1fr;
+        }
+
+        .deploy-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .scoreboard,
+        .mini-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="progress-bar"
+      aria-hidden="true"
+    ></div>
+    <nav
+      class="nav-dots"
+      aria-label="Slide navigation"
+    ></nav>
+
+    <!-- ===========================================
+         SLIDE 1: COVER
+         =========================================== -->
+    <section class="slide visible">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Qwen3 Embedding Technical Report</div>
+          <div class="slide-number">01 / 08</div>
+        </div>
+
+        <div class="hero-grid">
+          <div class="hero-left">
+            <div class="slide-title-wrap">
+              <div class="section-kicker reveal">论文汇报</div>
+              <h1 class="title reveal">Qwen3 Embedding</h1>
+              <p class="subtitle reveal">
+                一套把 <strong>Embedding</strong> 与 <strong>Reranker</strong> 一起做深的基础模型方案：
+                用 Qwen3 backbone、多阶段训练和模型融合，把多语种、代码检索和复杂检索任务一起推高。
+              </p>
+            </div>
+
+            <div class="hero-badges reveal">
+              <span class="hero-badge">Embedding + Reranking 双线发布</span>
+              <span class="hero-badge">0.6B / 4B / 8B</span>
+              <span class="hero-badge">MMTEB / CMTEB / MTEB Code</span>
+              <span class="hero-badge">Apache 2.0 开源</span>
+            </div>
+
+            <div class="panel panel-strong thesis-card reveal-scale">
+              <div class="thesis-index">T3</div>
+              <div class="thesis-text">
+                <strong>一句话判断</strong>
+                <span>
+                  这篇论文的价值不只是“Qwen 做了 embedding”，而是把
+                  <strong>基础模型能力、合成数据、监督微调、模型融合</strong>
+                  串成了一套可扩展的检索训练方法。
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="scoreboard reveal">
+              <div class="score-card">
+                <div class="label">MMTEB Multilingual</div>
+                <div class="value">70.58</div>
+              </div>
+              <div class="score-card">
+                <div class="label">MTEB Code</div>
+                <div class="value">80.68</div>
+              </div>
+              <div class="score-card">
+                <div class="label">Qwen3-Reranker 4B</div>
+                <div class="value">81.20</div>
+              </div>
+              <div class="score-card">
+                <div class="label">Synthetic Pairs</div>
+                <div class="value">150M</div>
+              </div>
+            </div>
+
+            <div class="orbital panel reveal-scale">
+              <div class="orbital-inner">
+                <div>
+                  <div class="section-kicker">适用场景</div>
+                  <div class="title" style="font-size: clamp(1.3rem, 3vw, 2.35rem);">RAG / Search / Agent</div>
+                  <div style="margin-top: 0.8rem;">
+                    <span class="orbital-chip">多语种检索</span>
+                    <span class="orbital-chip">代码检索</span>
+                    <span class="orbital-chip">Instruction-aware</span>
+                    <span class="orbital-chip">可选维度输出</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Source: Zhang et al., 2025, arXiv:2506.05176</span>
+        <span>章谱生风格模板 T3 · 浅蓝工程路演</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: WHY IT MATTERS
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Context</div>
+          <div class="slide-number">02 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">问题背景</div>
+          <h2 class="section-title reveal">这篇论文解决的不是单点性能，而是检索链路的“全套升级”</h2>
+          <p class="subtitle reveal">
+            在 RAG 和 agent 系统里，召回质量、跨语言能力、代码理解和 rerank 精排已经成为同一个系统问题。
+          </p>
+        </div>
+
+        <div class="two-column">
+          <div class="panel panel-pad reveal-left">
+            <ul class="bullet-list">
+              <li>
+                <div>
+                  <strong>Embedding 不再只是语义相似度工具</strong><br />
+                  它要兼顾长文本、检索指令、低资源语言和下游 task transfer。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>Reranker 不能只吃传统 pair 数据</strong><br />
+                  新场景需要复杂指令检索、代码检索和跨语言排序。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>训练瓶颈已经转到数据侧</strong><br />
+                  仅靠公开弱监督语料很难同时覆盖任务类型、语言、难度和长度。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>作者的核心思路</strong><br />
+                  用 Qwen3 foundation model 既做 backbone，也反过来参与高质量训练数据合成。
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel panel-pad reveal-scale">
+            <div class="mini-grid">
+              <div class="mini-card">
+                <h4>Recall</h4>
+                <p>先用 embedding 找到高召回候选，覆盖更多相关文档。</p>
+              </div>
+              <div class="mini-card">
+                <h4>Precision</h4>
+                <p>再用 reranker 对候选进行点式判断，把最相关内容顶上来。</p>
+              </div>
+              <div class="mini-card">
+                <h4>Multilingual</h4>
+                <p>不是只做英文 leaderboard，而是把 MMTEB、CMTEB 和代码检索一并拉齐。</p>
+              </div>
+              <div class="mini-card">
+                <h4>Deployability</h4>
+                <p>从 0.6B 到 8B 覆盖轻量部署、平衡型检索和旗舰性能场景。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Paper focus: text embedding + reranking for modern retrieval</span>
+        <span>Slide 2</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: MODEL FAMILY
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Architecture</div>
+          <div class="slide-number">03 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">模型体系</div>
+          <h2 class="section-title reveal">作者把同一套 Qwen3 foundation 拆成两条产品线：召回向量 + 精排判断</h2>
+        </div>
+
+        <div class="two-column">
+          <div class="image-frame reveal-scale">
+            <img
+              src="assets/architecture.png"
+              alt="Qwen3 Embedding and Reranker architecture"
+            />
+            <div class="image-caption">论文 Figure 1：左侧是 embedding，右侧是 reranker。</div>
+          </div>
+
+          <div class="panel panel-pad reveal-left">
+            <div class="mini-grid" style="grid-template-columns: 1fr;">
+              <div class="mini-card">
+                <h4>Embedding 路线</h4>
+                <p>输入形态是 `{Instruction} + {Query}` 与 `{Doc}`，最终取末层隐藏状态得到向量表示。</p>
+              </div>
+              <div class="mini-card">
+                <h4>Reranker 路线</h4>
+                <p>把 query、doc 和 instruction 拼进单个上下文，转成 “yes / no” 的相关性判断。</p>
+              </div>
+            </div>
+
+            <div style="height: 0.8rem;"></div>
+
+            <div class="panel panel-strong panel-pad">
+              <div class="section-kicker">配置速览</div>
+              <div class="chart-card">
+                <div class="chart-row">
+                  <div class="chart-label">0.6B</div>
+                  <div class="chart-track"><div class="chart-fill qwen06" style="width: 25%;"></div></div>
+                  <div class="chart-value">1024 dim</div>
+                </div>
+                <div class="chart-row">
+                  <div class="chart-label">4B</div>
+                  <div class="chart-track"><div class="chart-fill qwen4" style="width: 62%;"></div></div>
+                  <div class="chart-value">2560 dim</div>
+                </div>
+                <div class="chart-row">
+                  <div class="chart-label">8B</div>
+                  <div class="chart-track"><div class="chart-fill qwen8" style="width: 100%;"></div></div>
+                  <div class="chart-value">4096 dim</div>
+                </div>
+              </div>
+              <p class="benchmark-note" style="margin-top: 0.9rem;">
+                全系支持 <strong>32K context</strong>；embedding 支持 <strong>MRL custom dimension</strong>；
+                embedding 和 reranker 都支持 instruction-aware 输入。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Source image: Figure 1 from the local PDF</span>
+        <span>Slide 3</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: TRAINING PIPELINE
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Training</div>
+          <div class="slide-number">04 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">训练流水线</div>
+          <h2 class="section-title reveal">Qwen3 Embedding 的亮点在于“模型能力反哺数据能力”</h2>
+          <p class="subtitle reveal">
+            论文没有停留在常规弱监督，而是用 Qwen3-32B 参与生成多任务、多语言、高可控的训练数据。
+          </p>
+        </div>
+
+        <div class="two-column">
+          <div class="image-frame reveal-scale">
+            <img
+              src="assets/pipeline.png"
+              alt="Qwen3 Embedding training pipeline"
+            />
+            <div class="image-caption">论文 Figure 2：embedding 走三阶段，reranker 从第二阶段开始。</div>
+          </div>
+
+          <div class="panel panel-pad reveal-left">
+            <ul class="bullet-list">
+              <li>
+                <div>
+                  <strong>Stage 1: Synthetic weak supervision</strong><br />
+                  用 Qwen3-32B 按任务类型、语言、长度、难度和角色设定合成 pair 数据。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>Stage 2: High-quality SFT</strong><br />
+                  从合成数据里筛出高质量子集，再和标注数据一起做监督微调。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>Stage 3: Model merge</strong><br />
+                  用 slerp 融合多个 checkpoint，提高鲁棒性和泛化。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>数据规模</strong><br />
+                  共生成约 <strong>150M</strong> 弱监督 pairs，最终筛出约 <strong>12M</strong> 高质量 pairs。
+                </div>
+              </li>
+              <li>
+                <div>
+                  <strong>关键差异</strong><br />
+                  reranker 不做第一阶段弱监督，直接从高质量监督微调和 merge 开始。
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Source image: Figure 2 from the local PDF</span>
+        <span>Slide 4</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: MAIN RESULTS
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Benchmarks</div>
+          <div class="slide-number">05 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">主结果</div>
+          <h2 class="section-title reveal">4B 与 8B 基本进入第一梯队，0.6B 也已经非常能打</h2>
+          <p class="subtitle reveal">
+            论文最强信号是：这不是只在一个榜单上领先，而是在 multilingual、中文、英文和 code retrieval 上都形成一致趋势。
+          </p>
+        </div>
+
+        <div class="benchmark-grid">
+          <div class="panel panel-pad reveal-left">
+            <div class="chart-card">
+              <div class="chart-row">
+                <div class="chart-label">MMTEB Multilingual</div>
+                <div class="chart-track">
+                  <div class="chart-fill base" style="width: 68.37%;"></div>
+                  <div class="chart-fill qwen8" style="width: 70.58%; opacity: 0.96;"></div>
+                </div>
+                <div class="chart-value">70.58</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-label">MTEB English</div>
+                <div class="chart-track">
+                  <div class="chart-fill base" style="width: 73.30%;"></div>
+                  <div class="chart-fill qwen8" style="width: 75.22%; opacity: 0.96;"></div>
+                </div>
+                <div class="chart-value">75.22</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-label">CMTEB</div>
+                <div class="chart-track">
+                  <div class="chart-fill qwen4" style="width: 72.26%;"></div>
+                  <div class="chart-fill qwen8" style="width: 73.83%; opacity: 0.96;"></div>
+                </div>
+                <div class="chart-value">73.83</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-label">MTEB Code</div>
+                <div class="chart-track">
+                  <div class="chart-fill base" style="width: 74.66%;"></div>
+                  <div class="chart-fill qwen8" style="width: 80.68%; opacity: 0.96;"></div>
+                </div>
+                <div class="chart-value">80.68</div>
+              </div>
+            </div>
+            <p class="benchmark-note" style="margin-top: 1rem;">
+              上图里浅红基线对应论文中引用的商业 API 最强参考值，深蓝是 Qwen3-Embedding-8B。代码检索提升最明显。
+            </p>
+          </div>
+
+          <div class="metric-stack reveal-scale">
+            <div class="metric-highlight">
+              <div class="metric-no">A</div>
+              <div>
+                <strong>Qwen3-Embedding-0.6B</strong><br />
+                小模型在 MMTEB multilingual 达到 <strong>64.33</strong>，只明显落后于顶级商用模型，但成本更低。
+              </div>
+            </div>
+            <div class="metric-highlight">
+              <div class="metric-no">B</div>
+              <div>
+                <strong>Qwen3-Embedding-4B</strong><br />
+                在 multilingual、英文、中文和代码检索上形成比较均衡的高性能点，是最适合工程部署的平衡版本。
+              </div>
+            </div>
+            <div class="metric-highlight">
+              <div class="metric-no">C</div>
+              <div>
+                <strong>Qwen3-Embedding-8B</strong><br />
+                论文里的旗舰模型，多项指标超过 Gemini Embedding，说明基础模型路线在 embedding 上已经很成熟。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Data source: Tables 2 and 3 in the local PDF</span>
+        <span>Slide 5</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: RERANK + ABLATION
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Evidence</div>
+          <div class="slide-number">06 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">精排与消融</div>
+          <h2 class="section-title reveal">两件事最关键：高质量合成数据有用，模型融合也确实有用</h2>
+        </div>
+
+        <div class="ablation-grid">
+          <div class="panel panel-pad reveal-left">
+            <div class="section-kicker">Reranker</div>
+            <div class="chart-card">
+              <div class="chart-row">
+                <div class="chart-label">Qwen3-Reranker-0.6B</div>
+                <div class="chart-track"><div class="chart-fill qwen06" style="width: 66.36%;"></div></div>
+                <div class="chart-value">66.36</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-label">Qwen3-Reranker-4B</div>
+                <div class="chart-track"><div class="chart-fill qwen4" style="width: 72.74%;"></div></div>
+                <div class="chart-value">72.74</div>
+              </div>
+              <div class="chart-row">
+                <div class="chart-label">Qwen3-Reranker-8B</div>
+                <div class="chart-track"><div class="chart-fill qwen8" style="width: 72.94%;"></div></div>
+                <div class="chart-value">72.94</div>
+              </div>
+            </div>
+            <p class="benchmark-note" style="margin-top: 0.95rem;">
+              从 Table 4 看，4B/8B reranker 对复杂 retrieval 和 code retrieval 的提升比较稳定，
+              说明这条产品线不是陪衬，而是真正补齐了“召回后精排”能力。
+            </p>
+          </div>
+
+          <div class="panel panel-pad reveal-scale">
+            <div class="section-kicker">0.6B 消融</div>
+            <div class="ladder">
+              <div class="ladder-step">
+                <strong><span>仅 synthetic data</span><span>58.49</span></strong>
+                <span>只有合成数据，说明单靠第一阶段还不够。</span>
+              </div>
+              <div class="ladder-step">
+                <strong><span>去掉 synthetic stage</span><span>61.21</span></strong>
+                <span>不用弱监督也会掉点，说明大规模合成数据有基础价值。</span>
+              </div>
+              <div class="ladder-step">
+                <strong><span>去掉 model merge</span><span>62.56</span></strong>
+                <span>只做 SFT 不 merge，效果仍弱于最终模型。</span>
+              </div>
+              <div class="ladder-step step-final">
+                <strong><span>完整 Qwen3-Embedding-0.6B</span><span>64.33</span></strong>
+                <span>最终模型把三段式流程全部用上，表现最好。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Data source: Tables 4 and 5 in the local PDF</span>
+        <span>Slide 6</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: PRACTICAL GUIDANCE
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Deployment</div>
+          <div class="slide-number">07 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">落地建议</div>
+          <h2 class="section-title reveal">如果要把论文结论转成工程决策，关键是“模型分层使用”</h2>
+        </div>
+
+        <div class="deploy-grid">
+          <div class="deploy-card reveal-left">
+            <small>轻量部署</small>
+            <h4>0.6B</h4>
+            <ul>
+              <li>适合资源受限场景</li>
+              <li>可以做基础 embedding 检索</li>
+              <li>适合先搭 RAG 验证链路</li>
+              <li>优势是成本和速度</li>
+            </ul>
+          </div>
+
+          <div class="deploy-card reveal">
+            <small>平衡方案</small>
+            <h4>4B</h4>
+            <ul>
+              <li>适合中高质量中文/多语种检索</li>
+              <li>embedding 与 reranker 都比较成熟</li>
+              <li>是工程实践里最值得优先试的版本</li>
+              <li>性能和部署代价比较平衡</li>
+            </ul>
+          </div>
+
+          <div class="deploy-card reveal-scale">
+            <small>旗舰上限</small>
+            <h4>8B</h4>
+            <ul>
+              <li>追求最好检索质量时使用</li>
+              <li>代码检索和复杂 retrieval 表现最强</li>
+              <li>适合作为高质量 reranker 或主 embedding</li>
+              <li>更适合服务器侧方案</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="panel panel-pad reveal" style="margin-top: 1rem;">
+          <ul class="bullet-list">
+            <li>
+              <div>
+                <strong>系统组合建议</strong><br />
+                用 embedding 负责高召回，再用 reranker 提升 precision，这比只上一条模型线更接近论文本意。
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>对 agent / RAG 的意义</strong><br />
+                instruction-aware、long context、multilingual 与 code retrieval 的同时提升，意味着这套模型更适合作为现代检索底座。
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Interpretation based on the reported benchmarks and model sizes</span>
+        <span>Slide 7</span>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: TAKEAWAYS
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-header reveal">
+          <div class="eyebrow">Closing</div>
+          <div class="slide-number">08 / 08</div>
+        </div>
+
+        <div class="slide-title-wrap">
+          <div class="section-kicker reveal">结论</div>
+          <h2 class="section-title reveal">这篇论文真正可借鉴的是“基础模型驱动检索训练”的方法论</h2>
+        </div>
+
+        <div class="benchmark-grid closing">
+          <div class="takeaway-stack reveal-left">
+            <div class="takeaway">
+              <div class="takeaway-index">1</div>
+              <div>Qwen3 把 embedding 与 reranker 做成了一套完整产品族，而不是只放一个向量模型。</div>
+            </div>
+            <div class="takeaway">
+              <div class="takeaway-index">2</div>
+              <div>最大亮点是多阶段训练：合成弱监督、监督微调、checkpoint merge 形成闭环。</div>
+            </div>
+            <div class="takeaway">
+              <div class="takeaway-index">3</div>
+              <div>0.6B 已可用，4B 最平衡，8B 代表公开路线里的高性能上限。</div>
+            </div>
+            <div class="takeaway">
+              <div class="takeaway-index">4</div>
+              <div>多语种与代码检索成绩说明它不是只面向传统搜索，更面向 RAG 与 agent 检索底座。</div>
+            </div>
+            <div class="takeaway">
+              <div class="takeaway-index">5</div>
+              <div>如果后续做自己的 embedding 研究，这篇论文最值得复用的是数据生成和训练组织方式。</div>
+            </div>
+          </div>
+
+          <div class="panel panel-pad source-box reveal-scale">
+            <div>
+              <div class="source-tag">Source PDF</div>
+              <div style="height: 0.8rem;"></div>
+              <div class="source-title">
+                Zhang et al. (2025)<br />
+                Qwen3 Embedding: Advancing Text Embedding and Reranking Through Foundation Models
+              </div>
+              <div style="height: 0.8rem;"></div>
+              <div class="source-meta">
+                arXiv: 2506.05176v3<br />
+                作者单位：Tongyi Lab, Alibaba Group<br />
+                本页所有结论均基于本地 PDF 提取与整理
+              </div>
+            </div>
+
+            <div class="panel panel-strong panel-pad">
+              <div class="section-kicker">汇报输出</div>
+              <p class="benchmark-note">
+                这份 slide 采用章谱生个人模板库中的 <strong>T3 浅蓝工程路演</strong> 风格，
+                目标不是复刻论文版式，而是把读者真正需要记住的方法、结果和工程判断讲清楚。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Prepared from local PDF materials under Zotero storage VUPVXYXE</span>
+        <span>Slide 8</span>
+      </div>
+    </section>
+
+    <script>
+      /* ===========================================
+         PRESENTATION CONTROLLER
+         键盘、触控、滚轮、导航点、进度条
+         =========================================== */
+      class SlidePresentation {
+        constructor() {
+          this.slides = Array.from(document.querySelectorAll(".slide"));
+          this.navDotsContainer = document.querySelector(".nav-dots");
+          this.progressBar = document.querySelector(".progress-bar");
+          this.currentSlide = 0;
+          this.isScrolling = false;
+          this.touchStartY = 0;
+          this.touchEndY = 0;
+          this.setupIntersectionObserver();
+          this.setupKeyboardNav();
+          this.setupTouchNav();
+          this.setupWheelNav();
+          this.setupProgressBar();
+          this.setupNavDots();
+          this.updateUI(0);
+        }
+
+        setupIntersectionObserver() {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  const index = this.slides.indexOf(entry.target);
+                  if (index !== -1) {
+                    this.currentSlide = index;
+                    this.updateUI(index);
+                  }
+                }
+              });
+            },
+            { threshold: 0.6 }
+          );
+          this.slides.forEach((slide) => observer.observe(slide));
+        }
+
+        setupKeyboardNav() {
+          document.addEventListener("keydown", (event) => {
+            if (["ArrowDown", "PageDown", " ", "ArrowRight"].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+            }
+            if (["ArrowUp", "PageUp", "ArrowLeft"].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(Math.max(this.currentSlide - 1, 0));
+            }
+            if (event.key === "Home") {
+              this.goToSlide(0);
+            }
+            if (event.key === "End") {
+              this.goToSlide(this.slides.length - 1);
+            }
+          });
+        }
+
+        setupTouchNav() {
+          document.addEventListener("touchstart", (event) => {
+            this.touchStartY = event.changedTouches[0].screenY;
+          }, { passive: true });
+
+          document.addEventListener("touchend", (event) => {
+            this.touchEndY = event.changedTouches[0].screenY;
+            const delta = this.touchStartY - this.touchEndY;
+            if (Math.abs(delta) < 60) return;
+            if (delta > 0) {
+              this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+            } else {
+              this.goToSlide(Math.max(this.currentSlide - 1, 0));
+            }
+          }, { passive: true });
+        }
+
+        setupWheelNav() {
+          window.addEventListener("wheel", (event) => {
+            if (this.isScrolling || Math.abs(event.deltaY) < 25) return;
+            this.isScrolling = true;
+            const nextIndex = event.deltaY > 0
+              ? Math.min(this.currentSlide + 1, this.slides.length - 1)
+              : Math.max(this.currentSlide - 1, 0);
+            this.goToSlide(nextIndex);
+            window.setTimeout(() => {
+              this.isScrolling = false;
+            }, 650);
+          }, { passive: true });
+        }
+
+        setupProgressBar() {
+          window.addEventListener("scroll", () => {
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+            this.progressBar.style.width = `${progress}%`;
+          }, { passive: true });
+        }
+
+        setupNavDots() {
+          this.navDotsContainer.innerHTML = "";
+          this.slides.forEach((_, index) => {
+            const dot = document.createElement("button");
+            dot.className = "nav-dot";
+            dot.type = "button";
+            dot.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+            dot.addEventListener("click", () => this.goToSlide(index));
+            this.navDotsContainer.appendChild(dot);
+          });
+        }
+
+        goToSlide(index) {
+          this.slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+          this.currentSlide = index;
+          this.updateUI(index);
+        }
+
+        updateUI(index) {
+          const dots = Array.from(this.navDotsContainer.querySelectorAll(".nav-dot"));
+          dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle("active", dotIndex === index);
+          });
+          const progress = (index / Math.max(this.slides.length - 1, 1)) * 100;
+          this.progressBar.style.width = `${progress}%`;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        new SlidePresentation();
+      });
+    </script>
+  </body>
+</html>

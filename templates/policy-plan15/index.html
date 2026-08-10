@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>十五五规划纲要专题汇报</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800&family=Noto+Serif+SC:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===========================================
+         THEME TOKENS
+         T1 党政化改造版：浅底、红金强调、规范汇报结构
+         =========================================== */
+      :root {
+        --bg-primary: #f5f1ea;
+        --bg-secondary: #efe7db;
+        --bg-panel: rgba(255, 255, 255, 0.9);
+        --bg-panel-strong: rgba(255, 255, 255, 0.97);
+        --paper-line: rgba(110, 87, 54, 0.12);
+        --red: #bf1f2f;
+        --red-deep: #9e1221;
+        --gold: #b99043;
+        --gold-soft: rgba(185, 144, 67, 0.18);
+        --ink: #1f2b3b;
+        --ink-soft: #4f5f74;
+        --white: #ffffff;
+        --shadow: 0 20px 40px rgba(58, 44, 28, 0.12);
+        --font-display: "Noto Serif SC", serif;
+        --font-body: "Noto Sans SC", sans-serif;
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --duration-normal: 0.7s;
+      }
+
+      /* ===========================================
+         RESET
+         =========================================== */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ===========================================
+         VIEWPORT FITTING: MANDATORY BASE STYLES
+         Include this ENTIRE file in every presentation.
+         These styles ensure slides fit exactly in the viewport.
+         =========================================== */
+
+      /* 1. Lock html/body to viewport */
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
+
+      /* 2. Each slide = exact viewport height */
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile browsers */
+        overflow: hidden; /* CRITICAL: Prevent ANY overflow */
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      /* 3. Content container with flex for centering */
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden; /* Double-protection against overflow */
+        padding: var(--slide-padding);
+      }
+
+      /* 4. ALL typography uses clamp() for responsive scaling */
+      :root {
+        /* Titles scale from mobile to desktop */
+        --title-size: clamp(1.5rem, 5vw, 4rem);
+        --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+        --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+
+        /* Body text */
+        --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+        --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+        /* Spacing scales with viewport */
+        --slide-padding: clamp(1rem, 4vw, 4rem);
+        --content-gap: clamp(0.5rem, 2vw, 2rem);
+        --element-gap: clamp(0.25rem, 1vw, 1rem);
+      }
+
+      /* 5. Cards/containers use viewport-relative max sizes */
+      .card,
+      .container,
+      .content-box {
+        max-width: min(90vw, 1000px);
+        max-height: min(80vh, 700px);
+      }
+
+      /* 6. Lists auto-scale with viewport */
+      .feature-list,
+      .bullet-list {
+        gap: clamp(0.4rem, 1vh, 1rem);
+      }
+
+      .feature-list li,
+      .bullet-list li {
+        font-size: var(--body-size);
+        line-height: 1.4;
+      }
+
+      /* 7. Grids adapt to available space */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+        gap: clamp(0.5rem, 1.5vw, 1rem);
+      }
+
+      /* 8. Images constrained to viewport */
+      img,
+      .image-container {
+        max-width: 100%;
+        max-height: min(50vh, 400px);
+        object-fit: contain;
+      }
+
+      /* ===========================================
+         RESPONSIVE BREAKPOINTS
+         Aggressive scaling for smaller viewports
+         =========================================== */
+
+      /* Short viewports (< 700px height) */
+      @media (max-height: 700px) {
+        :root {
+          --slide-padding: clamp(0.75rem, 3vw, 2rem);
+          --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+          --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+          --h2-size: clamp(1rem, 3vw, 1.75rem);
+        }
+      }
+
+      /* Very short viewports (< 600px height) */
+      @media (max-height: 600px) {
+        :root {
+          --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+          --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+          --title-size: clamp(1.1rem, 4vw, 2rem);
+          --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        }
+
+        /* Hide non-essential elements */
+        .nav-dots,
+        .keyboard-hint,
+        .decorative {
+          display: none;
+        }
+      }
+
+      /* Extremely short (landscape phones, < 500px height) */
+      @media (max-height: 500px) {
+        :root {
+          --slide-padding: clamp(0.4rem, 2vw, 1rem);
+          --title-size: clamp(1rem, 3.5vw, 1.5rem);
+          --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+          --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+      }
+
+      /* Narrow viewports (< 600px width) */
+      @media (max-width: 600px) {
+        :root {
+          --title-size: clamp(1.25rem, 7vw, 2.5rem);
+        }
+
+        /* Stack grids vertically */
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===========================================
+         REDUCED MOTION
+         Respect user preferences
+         =========================================== */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.2s !important;
+        }
+
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* ===========================================
+         BASE DOCUMENT STYLING
+         =========================================== */
+      body {
+        font-family: var(--font-body);
+        color: var(--ink);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.22)),
+          repeating-linear-gradient(
+            180deg,
+            rgba(160, 132, 88, 0.03) 0,
+            rgba(160, 132, 88, 0.03) 1px,
+            transparent 1px,
+            transparent 24px
+          ),
+          var(--bg-primary);
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 0;
+        background: linear-gradient(90deg, var(--red), var(--gold));
+        z-index: 1000;
+        transition: width 0.2s ease;
+      }
+
+      .nav-dots {
+        position: fixed;
+        right: clamp(0.75rem, 1.8vw, 1.5rem);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        z-index: 1000;
+      }
+
+      .nav-dot {
+        width: 0.78rem;
+        height: 0.78rem;
+        border-radius: 50%;
+        border: 1px solid rgba(120, 84, 29, 0.26);
+        background: rgba(255, 255, 255, 0.72);
+        cursor: pointer;
+        transition:
+          transform 0.25s ease,
+          background 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      .nav-dot.active {
+        background: var(--red);
+        border-color: var(--red);
+        transform: scale(1.18);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .reveal-left {
+        opacity: 0;
+        transform: translateX(-36px);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .reveal-scale {
+        opacity: 0;
+        transform: scale(0.94);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .slide.visible .reveal,
+      .slide.visible .reveal-left,
+      .slide.visible .reveal-scale {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+
+      .reveal:nth-child(1) {
+        transition-delay: 0.08s;
+      }
+      .reveal:nth-child(2) {
+        transition-delay: 0.16s;
+      }
+      .reveal:nth-child(3) {
+        transition-delay: 0.24s;
+      }
+      .reveal:nth-child(4) {
+        transition-delay: 0.32s;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: clamp(0.35rem, 0.7vw, 0.5rem);
+        background: linear-gradient(90deg, var(--red), var(--gold));
+        z-index: 2;
+      }
+
+      .slide::after {
+        content: "";
+        position: absolute;
+        left: clamp(1rem, 4vw, 4rem);
+        right: clamp(1rem, 4vw, 4rem);
+        bottom: clamp(0.8rem, 1.2vw, 1.1rem);
+        height: 1px;
+        background: linear-gradient(90deg, rgba(191, 31, 47, 0.24), rgba(185, 144, 67, 0.3));
+      }
+
+      .slide-shell {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        height: 100%;
+        gap: clamp(0.7rem, 1vw, 1rem);
+      }
+
+      .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+        font-weight: 700;
+        color: var(--red);
+        letter-spacing: 0.06em;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 2.6rem;
+        height: 2px;
+        background: linear-gradient(90deg, var(--red), var(--gold));
+      }
+
+      .slide-number {
+        font-size: clamp(0.76rem, 1vw, 0.94rem);
+        font-weight: 700;
+        color: var(--ink-soft);
+      }
+
+      .title-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 0.32rem 0.72rem;
+        border-radius: 999px;
+        background: rgba(191, 31, 47, 0.08);
+        color: var(--red);
+        font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+        font-weight: 700;
+      }
+
+      .section-title {
+        max-width: 16ch;
+        font-family: var(--font-display);
+        font-size: var(--h2-size);
+        line-height: 1.18;
+        color: var(--ink);
+      }
+
+      .section-subtitle {
+        max-width: 66ch;
+        font-size: clamp(0.88rem, 1.2vw, 1.05rem);
+        line-height: 1.7;
+        color: var(--ink-soft);
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: clamp(1rem, 2vw, 1.8rem);
+        min-height: 0;
+      }
+
+      .content-grid.reverse {
+        grid-template-columns: 0.95fr 1.05fr;
+      }
+
+      .stack {
+        display: grid;
+        gap: clamp(0.8rem, 1.2vw, 1rem);
+        min-height: 0;
+      }
+
+      .panel {
+        position: relative;
+        border: 1px solid rgba(122, 88, 44, 0.13);
+        background: var(--bg-panel);
+        border-radius: 1.1rem;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel-strong {
+        background: var(--bg-panel-strong);
+      }
+
+      .panel-pad {
+        padding: clamp(0.9rem, 1.3vw, 1.15rem);
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 0.22rem;
+        background: linear-gradient(90deg, var(--red), var(--gold));
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(0.7rem, 1vw, 0.9rem);
+      }
+
+      .metric {
+        display: grid;
+        gap: 0.3rem;
+        border: 1px solid rgba(122, 88, 44, 0.09);
+        border-radius: 0.95rem;
+        padding: 0.9rem 0.95rem;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .metric-value {
+        font-size: clamp(1.35rem, 2.4vw, 2rem);
+        line-height: 1;
+        font-weight: 800;
+        color: var(--red);
+      }
+
+      .metric-label {
+        font-size: clamp(0.82rem, 1.05vw, 0.96rem);
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .metric-note {
+        font-size: clamp(0.7rem, 0.9vw, 0.82rem);
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+
+      .bullet-list {
+        list-style: none;
+        display: grid;
+      }
+
+      .bullet-list li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.78rem;
+        align-items: start;
+        padding: 0.35rem 0;
+      }
+
+      .bullet-list li::before {
+        content: "";
+        width: 0.7rem;
+        height: 0.7rem;
+        margin-top: 0.34rem;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, var(--gold), var(--red));
+        box-shadow: 0 0 0 0.18rem rgba(191, 31, 47, 0.09);
+      }
+
+      .bullet-list strong {
+        color: var(--ink);
+      }
+
+      .quote-band {
+        border-left: 4px solid var(--red);
+        padding-left: 1rem;
+        font-size: clamp(0.92rem, 1.18vw, 1.08rem);
+        line-height: 1.8;
+        color: var(--ink);
+        background: linear-gradient(90deg, rgba(191, 31, 47, 0.045), rgba(185, 144, 67, 0.02));
+        border-radius: 0 0.9rem 0.9rem 0;
+        padding-top: 0.9rem;
+        padding-bottom: 0.9rem;
+        padding-right: 1rem;
+      }
+
+      .mini-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .mini-card {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(122, 88, 44, 0.1);
+        border-radius: 0.95rem;
+        padding: 0.8rem 0.85rem;
+      }
+
+      .mini-card-title {
+        font-size: clamp(0.82rem, 1.05vw, 0.94rem);
+        font-weight: 800;
+        color: var(--red-deep);
+        margin-bottom: 0.3rem;
+      }
+
+      .mini-card p {
+        font-size: clamp(0.74rem, 0.94vw, 0.84rem);
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+
+      .image-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border-radius: 1.1rem;
+        overflow: hidden;
+        min-height: 0;
+        background: #ddd;
+        box-shadow: var(--shadow);
+      }
+
+      .image-card img {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        object-fit: cover;
+      }
+
+      .image-card.portrait {
+        min-height: clamp(18rem, 52vh, 34rem);
+      }
+
+      .image-card.landscape {
+        min-height: clamp(14rem, 36vh, 22rem);
+      }
+
+      .image-card.contain img {
+        object-fit: contain;
+        background: linear-gradient(180deg, rgba(244, 240, 233, 0.9), rgba(255, 255, 255, 0.85));
+      }
+
+      .image-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.7rem 0.9rem;
+        background: linear-gradient(180deg, rgba(17, 18, 24, 0), rgba(17, 18, 24, 0.78));
+        color: var(--white);
+        font-size: clamp(0.67rem, 0.9vw, 0.8rem);
+        line-height: 1.45;
+      }
+
+      .split-images {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+      }
+
+      .kpi-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .kpi-strip .metric-value {
+        font-size: clamp(1.2rem, 2vw, 1.75rem);
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .tag {
+        padding: 0.38rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(185, 144, 67, 0.12);
+        color: #7c5a1d;
+        font-size: clamp(0.72rem, 0.92vw, 0.84rem);
+        font-weight: 700;
+      }
+
+      .footer-note {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        font-size: clamp(0.68rem, 0.9vw, 0.82rem);
+        color: var(--ink-soft);
+      }
+
+      .footer-note strong {
+        color: var(--red-deep);
+      }
+
+      .cover-slide {
+        color: var(--white);
+        background:
+          linear-gradient(105deg, rgba(74, 8, 17, 0.82), rgba(74, 8, 17, 0.44) 46%, rgba(18, 24, 36, 0.18)),
+          url("assets/cover-greathall.jpg") center center / cover no-repeat;
+      }
+
+      .cover-slide::before {
+        height: 0.45rem;
+      }
+
+      .cover-slide::after {
+        background: rgba(255, 255, 255, 0.24);
+      }
+
+      .cover-shell {
+        height: 100%;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 1.2rem;
+      }
+
+      .cover-topline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: clamp(0.78rem, 1vw, 0.94rem);
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      .cover-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.38rem 0.82rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(8px);
+      }
+
+      .cover-main {
+        display: grid;
+        align-content: center;
+        gap: 1rem;
+        max-width: min(66rem, 78vw);
+      }
+
+      .cover-kicker {
+        font-size: clamp(0.88rem, 1.1vw, 1rem);
+        font-weight: 700;
+        color: #ffe5ad;
+        letter-spacing: 0.08em;
+      }
+
+      .cover-title {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5.7vw, 4.9rem);
+        line-height: 1.14;
+      }
+
+      .cover-subtitle {
+        max-width: 55ch;
+        font-size: clamp(0.96rem, 1.3vw, 1.16rem);
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.92);
+      }
+
+      .cover-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+      }
+
+      .cover-chip {
+        padding: 0.55rem 0.9rem;
+        border-radius: 0.9rem;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: clamp(0.76rem, 0.98vw, 0.9rem);
+      }
+
+      .cover-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 1rem;
+        font-size: clamp(0.74rem, 0.96vw, 0.88rem);
+        color: rgba(255, 255, 255, 0.84);
+      }
+
+      .conclusion-grid {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 1rem;
+      }
+
+      .takeaway-list {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .takeaway {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.8rem;
+        align-items: start;
+        padding: 0.86rem 0.9rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(122, 88, 44, 0.1);
+      }
+
+      .takeaway-index {
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--red), var(--gold));
+        color: var(--white);
+        font-size: 0.86rem;
+        font-weight: 800;
+        display: grid;
+        place-items: center;
+      }
+
+      .source-box {
+        display: grid;
+        gap: 0.9rem;
+        background:
+          linear-gradient(180deg, rgba(191, 31, 47, 0.06), rgba(185, 144, 67, 0.06)),
+          var(--bg-panel-strong);
+      }
+
+      .source-title {
+        font-size: clamp(1rem, 1.35vw, 1.2rem);
+        line-height: 1.6;
+        color: var(--ink);
+        font-weight: 800;
+      }
+
+      .source-meta {
+        font-size: clamp(0.76rem, 0.96vw, 0.86rem);
+        line-height: 1.7;
+        color: var(--ink-soft);
+      }
+
+      @media (max-width: 980px) {
+        .content-grid,
+        .content-grid.reverse,
+        .conclusion-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .mini-cards,
+        .metric-grid,
+        .split-images,
+        .kpi-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .cover-main {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-bar"></div>
+    <nav class="nav-dots" aria-label="幻灯片导航"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: COVER
+         =========================================== -->
+    <section class="slide cover-slide">
+      <div class="slide-content">
+        <div class="cover-shell">
+          <div class="cover-topline reveal">
+            <div class="cover-badge">专题汇报 / 政策解读</div>
+            <div>新华社 / 新华网公开报道整理</div>
+          </div>
+
+          <div class="cover-main">
+            <div class="cover-kicker reveal">围绕 2026-2030 年国家发展主线</div>
+            <h1 class="cover-title reveal">
+              从《十五五规划纲要》看<br />
+              中国式现代化关键五年
+            </h1>
+            <p class="cover-subtitle reveal">
+              以 2026 年 3 月 13 日新华网全文发布的《中华人民共和国国民经济和社会发展第十五个五年规划纲要》为核心材料，
+              提炼其历史方位、重点任务、重大工程与产业抓手，形成一套适合专题宣讲与课堂汇报的 8 页摘要。
+            </p>
+            <div class="cover-meta reveal">
+              <div class="cover-chip">十八篇 / 六十二章</div>
+              <div class="cover-chip">“夯实基础、全面发力”的关键时期</div>
+              <div class="cover-chip">2035 年基本实现现代化的重要衔接段</div>
+            </div>
+          </div>
+
+          <div class="cover-bottom reveal">
+            <span>图片：2026 年 3 月 12 日，第十四届全国人民代表大会第四次会议闭幕会现场</span>
+            <span>01 / 08</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: WHY IT MATTERS
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">战略定位</div>
+            <div class="slide-number">02 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">先看全局判断</div>
+            <h2 class="section-title reveal">这不是一般政策文本，而是未来五年的行动纲领</h2>
+            <p class="section-subtitle reveal">
+              纲要明确“十五五”时期是<strong>承前启后、夯实基础、全面发力</strong>的关键阶段。
+              对内，它回答高质量发展怎么干；对外，它释放中国在复杂环境中坚持办好自己事情的战略定力。
+            </p>
+          </div>
+
+          <div class="content-grid">
+            <div class="stack">
+              <div class="panel panel-pad panel-strong reveal-left">
+                <div class="quote-band">
+                  “十五五”时期在基本实现社会主义现代化进程中具有承前启后的重要地位，
+                  是夯实基础、全面发力的关键时期。
+                </div>
+              </div>
+
+              <div class="metric-grid">
+                <div class="metric reveal">
+                  <div class="metric-value">2026-2030</div>
+                  <div class="metric-label">规划覆盖时段</div>
+                  <div class="metric-note">这是迈向 2035 年基本实现社会主义现代化的关键五年。</div>
+                </div>
+                <div class="metric reveal">
+                  <div class="metric-value">18 / 62</div>
+                  <div class="metric-label">篇章结构</div>
+                  <div class="metric-note">全文共十八篇、六十二章，覆盖经济、科技、民生、安全等全局任务。</div>
+                </div>
+                <div class="metric reveal">
+                  <div class="metric-value">7 万+</div>
+                  <div class="metric-label">文本体量</div>
+                  <div class="metric-note">新华社“编制记”指出，纲要正文体量超过七万字。</div>
+                </div>
+                <div class="metric reveal">
+                  <div class="metric-value">109 项</div>
+                  <div class="metric-label">重大工程项目</div>
+                  <div class="metric-note">“五年规划”落地的重要抓手，被纳入权威速览专题解读。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="image-card portrait contain reveal-scale">
+              <img src="assets/projects-overview-red.jpg" alt="十五五规划 109 项重大工程项目权威速览" />
+              <div class="image-caption">新华社权威速览：109 项重大工程项目，体现“国家大事”与“关键小事”统筹落地。</div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>核心依据：新华网 2026 年 3 月 13 日全文发布；新华社 2026 年 3 月 30 日“编制记”</span>
+            <span>Slide 2</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: ORIENTATION
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">总要求</div>
+            <div class="slide-number">03 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">纲要主线</div>
+            <h2 class="section-title reveal">以高质量发展牵引“决定性进展”</h2>
+            <p class="section-subtitle reveal">
+              纲要把“推动经济实现质的有效提升和量的合理增长”放在中心位置，
+              同时把改革创新、共同富裕、统筹发展和安全一并纳入整体部署。
+            </p>
+          </div>
+
+          <div class="content-grid reverse">
+            <div class="image-card landscape reveal-scale">
+              <img src="assets/tianjin-port.jpeg" alt="天津港航运与现代基础设施" />
+              <div class="image-caption">新华社配图：天津港，体现超大规模市场、交通枢纽与现代化基础设施支撑能力。</div>
+            </div>
+
+            <div class="stack">
+              <div class="panel panel-pad panel-strong reveal-left">
+                <ul class="bullet-list">
+                  <li>
+                    <div><strong>主题</strong>：坚持以推动高质量发展为主题，把现代化建设落到产业、科技、民生和治理全链条。</div>
+                  </li>
+                  <li>
+                    <div><strong>动力</strong>：把改革创新明确为根本动力，围绕新质生产力培育新优势。</div>
+                  </li>
+                  <li>
+                    <div><strong>目的</strong>：以满足人民日益增长的美好生活需要为根本目的，推进共同富裕迈出坚实步伐。</div>
+                  </li>
+                  <li>
+                    <div><strong>方法</strong>：统筹国内国际两个大局，统筹发展和安全，以确定性应对外部不确定性。</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mini-cards">
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">制度优势</div>
+                  <p>中国特色社会主义制度优势、超大规模市场优势、完整产业体系优势继续凸显。</p>
+                </div>
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">风险挑战</div>
+                  <p>外部环境更趋复杂，内部仍面临需求不足、动能切换、风险隐患等现实压力。</p>
+                </div>
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">判断逻辑</div>
+                  <p>不是“守摊子”，而是在承接“十四五”成果基础上主动塑造下一阶段发展格局。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>依据：纲要“发展环境”“指导思想”部分，对历史方位和总要求作出集中概括</span>
+            <span>Slide 3</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: INDUSTRY AND PROJECTS
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">产业与工程</div>
+            <div class="slide-number">04 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">实体经济根基</div>
+            <h2 class="section-title reveal">现代化产业体系要靠“产业升级 + 重大工程”双轮驱动</h2>
+            <p class="section-subtitle reveal">
+              纲要一方面推动传统产业高端化、智能化、绿色化改造，另一方面明确战略性新兴产业、未来产业和基础设施工程的整体布局。
+            </p>
+          </div>
+
+          <div class="content-grid">
+            <div class="stack">
+              <div class="panel panel-pad panel-strong reveal-left">
+                <div class="tags">
+                  <span class="tag">新一代信息技术</span>
+                  <span class="tag">新能源</span>
+                  <span class="tag">智能网联新能源汽车</span>
+                  <span class="tag">机器人</span>
+                  <span class="tag">生物医药</span>
+                  <span class="tag">航空航天</span>
+                  <span class="tag">低空经济</span>
+                  <span class="tag">海洋经济</span>
+                </div>
+                <div style="height: 0.85rem;"></div>
+                <ul class="bullet-list">
+                  <li><div><strong>新兴产业</strong>：打造一批成长潜力大、技术含量高、渗透领域广的新兴支柱产业。</div></li>
+                  <li><div><strong>未来产业</strong>：布局量子科技、生物制造、氢能和核聚变能、脑机接口、具身智能、6G 等增长点。</div></li>
+                  <li><div><strong>工程抓手</strong>：重大工程不只是“项目清单”，而是把产业政策、区域布局和投资安排落到实施层面。</div></li>
+                </ul>
+              </div>
+
+              <div class="split-images">
+                <div class="image-card portrait contain reveal-scale">
+                  <img src="assets/projects-28-red.jpg" alt="28项重大工程项目中的新产业新赛道培育" />
+                  <div class="image-caption">权威速览：28 项工程聚焦新产业新赛道。</div>
+                </div>
+                <div class="image-card portrait contain reveal-scale">
+                  <img src="assets/projects-infra-blue.jpg" alt="23项现代化基础设施重大工程项目" />
+                  <div class="image-caption">权威速览：23 项工程聚焦交通、能源、水网、算力网、卫星互联网等基础设施。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-pad reveal">
+              <div class="kpi-strip">
+                <div class="metric">
+                  <div class="metric-value">28 项</div>
+                  <div class="metric-label">新产业赛道工程</div>
+                  <div class="metric-note">覆盖高端新材料、集成电路、具身智能、商业航天、前沿科技攻关等。</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">23 项</div>
+                  <div class="metric-label">现代基础设施工程</div>
+                  <div class="metric-note">涉及综合交通、新能源体系、水网、全国一体化算力网、卫星互联网等。</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value">全链条</div>
+                  <div class="metric-label">政策组织方式</div>
+                  <div class="metric-note">从研发、标准、场景、验证到监管，强调产业全链条培育。</div>
+                </div>
+              </div>
+
+              <div style="height: 0.95rem;"></div>
+              <div class="quote-band">
+                这一页可以理解为：国家不是只讲“要发展”，而是已经把未来五年主要发力的产业赛道和基础设施网络框出来了。
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>依据：纲要第二篇“现代化产业体系”及新华社 2026 年 3 月 5 日“109 项重大工程项目”权威速览</span>
+            <span>Slide 4</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: SCI-TECH SELF-RELIANCE
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">科技自立自强</div>
+            <div class="slide-number">05 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">新质生产力</div>
+            <h2 class="section-title reveal">关键核心技术攻关，要从“跟进”转向“前沿布局”</h2>
+            <p class="section-subtitle reveal">
+              纲要把科技创新单独成篇，说明科技不再只是支撑项，而是引领产业升级、塑造国家竞争力的核心变量。
+            </p>
+          </div>
+
+          <div class="content-grid reverse">
+            <div class="stack">
+              <div class="split-images">
+                <div class="image-card landscape reveal-scale">
+                  <img src="assets/quantum-model.jpeg" alt="量子卫星模型与量子科技展示" />
+                  <div class="image-caption">新华社配图：量子卫星模型，呼应量子科技等未来产业方向。</div>
+                </div>
+                <div class="image-card landscape reveal-scale">
+                  <img src="assets/nuclear-site.jpg" alt="核电站建设现场" />
+                  <div class="image-caption">新华社配图：重大工程建设现场，体现高端装备与能源技术体系协同推进。</div>
+                </div>
+              </div>
+
+              <div class="panel panel-pad reveal">
+                <div class="tags">
+                  <span class="tag">人工智能</span>
+                  <span class="tag">量子科技</span>
+                  <span class="tag">具身智能</span>
+                  <span class="tag">商业航天</span>
+                  <span class="tag">生物制造</span>
+                  <span class="tag">第六代移动通信</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-pad panel-strong reveal-left">
+              <ul class="bullet-list">
+                <li><div><strong>人工智能</strong>：加快突破基础理论和核心技术，强化“模芯云用”协同创新，推动多模态、智能体、具身智能、群体智能发展。</div></li>
+                <li><div><strong>原始创新</strong>：把前沿性、基础性、颠覆性技术摆到更靠前位置，而不是只做成熟技术扩散。</div></li>
+                <li><div><strong>未来产业</strong>：用研究院、概念验证中心、示范工程等组织方式，为未来产业创造“从 0 到 1 再到 10”的制度条件。</div></li>
+                <li><div><strong>企业主体</strong>：科技创新不只依赖科研院所，还强调企业主体地位、场景牵引和应用落地。</div></li>
+              </ul>
+
+              <div style="height: 0.9rem;"></div>
+              <div class="quote-band">
+                这意味着“十五五”的科技逻辑，不是单点突破，而是把技术攻关、产业转化和国家战略需求串成一体。
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>依据：纲要第三篇“科技自立自强”及第五章“未来产业”相关部署</span>
+            <span>Slide 5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: DIGITAL CHINA
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">数字中国</div>
+            <div class="slide-number">06 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">数智化底座</div>
+            <h2 class="section-title reveal">算力网、新基建与“人工智能+”将成为新一轮放大器</h2>
+            <p class="section-subtitle reveal">
+              在数字中国章节，纲要不只讲数据和平台，而是把算力、算法、数据、应用和治理一并纳入国家级建设逻辑。
+            </p>
+          </div>
+
+          <div class="content-grid">
+            <div class="stack">
+              <div class="split-images">
+                <div class="image-card landscape reveal-scale">
+                  <img src="assets/supercompute.jpg" alt="超算设备巡检现场" />
+                  <div class="image-caption">新华社配图：超算设备巡检，体现智算基础设施扩容。</div>
+                </div>
+                <div class="image-card landscape reveal-scale">
+                  <img src="assets/compute-greenpower.jpeg" alt="中卫云基地绿电与算力协同项目" />
+                  <div class="image-caption">新华社配图：中卫云基地绿电项目，体现算电协同与东数西算。</div>
+                </div>
+              </div>
+
+              <div class="panel panel-pad reveal">
+                <div class="kpi-strip">
+                  <div class="metric">
+                    <div class="metric-value">8 + 10 + 3</div>
+                    <div class="metric-label">算力空间布局</div>
+                    <div class="metric-note">8 大国家算力枢纽、10 个国家算力集群、3 个算电协同区域。</div>
+                  </div>
+                  <div class="metric">
+                    <div class="metric-value">1882 EFLOPS</div>
+                    <div class="metric-label">智能算力规模</div>
+                    <div class="metric-note">截至 2026 年 3 月底，相关报道披露我国智能算力保持高位增长。</div>
+                  </div>
+                  <div class="metric">
+                    <div class="metric-value">72%</div>
+                    <div class="metric-label">监测调度平台接入</div>
+                    <div class="metric-note">全国一体化算力网监测调度平台已接入约七成智能计算资源。</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-pad panel-strong reveal-left">
+              <ul class="bullet-list">
+                <li><div><strong>算力供给</strong>：强化算力、算法、数据高效供给，建设多层次算力设施体系和全国一体化算力网。</div></li>
+                <li><div><strong>人工智能+</strong>：把人工智能嵌入科技创新、产业发展、文化建设、民生保障、社会治理各领域。</div></li>
+                <li><div><strong>数据体系</strong>：建立全国数据资源“一本账”，完善高质量数据集、语料库和可信数据空间。</div></li>
+                <li><div><strong>治理能力</strong>：推进政务领域大模型部署应用，提升感知预警、指挥决策和精准管理能力。</div></li>
+              </ul>
+
+              <div style="height: 0.9rem;"></div>
+              <div class="quote-band">
+                这一页的核心是：数字中国不只是“上云上平台”，而是把算力当作像水、电一样的重要公共底座来建设。
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>依据：纲要第四篇“数字中国建设”；新华社 2026 年 7 月 14 日算力网建设观察</span>
+            <span>Slide 6</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: GREEN TRANSITION
+         =========================================== -->
+    <section class="slide">
+      <div class="slide-content">
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">绿色转型</div>
+            <div class="slide-number">07 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">美丽中国与能源安全</div>
+            <h2 class="section-title reveal">新型能源体系，是稳增长、保安全、促转型的共同支点</h2>
+            <p class="section-subtitle reveal">
+              纲要把绿色转型单独成篇，强调积极稳妥推进碳达峰，同时从能源系统层面提高电力安全韧性和资源配置效率。
+            </p>
+          </div>
+
+          <div class="content-grid reverse">
+            <div class="image-card landscape reveal-scale">
+              <img src="assets/nuclear-site.jpg" alt="核电项目建设现场" />
+              <div class="image-caption">新华社配图：核电项目建设现场，体现能源体系升级与重大工程协同推进。</div>
+            </div>
+
+            <div class="stack">
+              <div class="panel panel-pad panel-strong reveal-left">
+                <ul class="bullet-list">
+                  <li><div><strong>系统目标</strong>：着力构建新型电力系统，全面提升电力系统互补互济和安全韧性水平。</div></li>
+                  <li><div><strong>基础设施</strong>：优化全国电力流向和跨区域通道布局，加快智能电网建设，完善城乡配电网。</div></li>
+                  <li><div><strong>调节能力</strong>：科学布局抽水蓄能，大力发展新型储能，为高比例新能源接入提供支撑。</div></li>
+                  <li><div><strong>绿色转型</strong>：绿色低碳不是单一环保目标，而是与产业升级、算电协同、区域发展一起推进。</div></li>
+                </ul>
+              </div>
+
+              <div class="mini-cards">
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">双重任务</div>
+                  <p>既要实现绿色低碳转型，也要保障能源安全和经济运行稳定。</p>
+                </div>
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">协同逻辑</div>
+                  <p>新能源基地、电网通道、储能系统、算力园区正在形成更强耦合。</p>
+                </div>
+                <div class="mini-card reveal">
+                  <div class="mini-card-title">现实含义</div>
+                  <p>这决定了“十五五”时期能源建设既是环保议题，也是国家竞争力议题。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span>依据：纲要第十三篇“绿色转型”；新华社 2026 年 5 月 9 日能源强国建设相关报道</span>
+            <span>Slide 7</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: CONCLUSION
+         =========================================== -->
+    <section class="slide">
+      <div
+        class="slide-content"
+        style="
+          background:
+            linear-gradient(115deg, rgba(245, 241, 234, 0.95), rgba(245, 241, 234, 0.92)),
+            url('assets/cover-greathall.jpg') center center / cover no-repeat;
+        "
+      >
+        <div class="slide-shell">
+          <div class="slide-header reveal">
+            <div class="eyebrow">汇报结论</div>
+            <div class="slide-number">08 / 08</div>
+          </div>
+
+          <div class="title-block">
+            <div class="section-label reveal">最后收束</div>
+            <h2 class="section-title reveal">可以把“十五五”理解为：把中国式现代化从开局推进到全面发力</h2>
+            <p class="section-subtitle reveal">
+              如果只记住一句话，这份纲要讲的不是“下一步继续干”，而是要在关键五年里把产业、科技、民生、治理和安全的支撑体系同步抬起来。
+            </p>
+          </div>
+
+          <div class="conclusion-grid">
+            <div class="takeaway-list">
+              <div class="takeaway reveal-left">
+                <div class="takeaway-index">1</div>
+                <div>历史定位很清楚：2026-2030 年是迈向 2035 年目标前最关键的衔接段。</div>
+              </div>
+              <div class="takeaway reveal-left">
+                <div class="takeaway-index">2</div>
+                <div>发力重点很清楚：现代化产业体系、科技自立自强、数字中国、新型能源体系是主轴。</div>
+              </div>
+              <div class="takeaway reveal-left">
+                <div class="takeaway-index">3</div>
+                <div>落地抓手很清楚：109 项重大工程把抽象战略转化为可以实施、可以考核、可以投资的现实任务。</div>
+              </div>
+              <div class="takeaway reveal-left">
+                <div class="takeaway-index">4</div>
+                <div>治理逻辑很清楚：统筹发展和安全，既要抢占产业制高点，也要稳住能源、数据、金融等关键底座。</div>
+              </div>
+              <div class="takeaway reveal-left">
+                <div class="takeaway-index">5</div>
+                <div>对宣讲和汇报而言，最重要的不是记条文，而是把“为什么这样部署、靠什么落地、会带来什么变化”讲透。</div>
+              </div>
+            </div>
+
+            <div class="panel panel-pad source-box reveal-scale">
+              <div class="source-title">主要资料来源</div>
+              <div class="source-meta">
+                1. 新华网，2026 年 3 月 13 日：《中华人民共和国国民经济和社会发展第十五个五年规划纲要》<br />
+                2. 新华社，2026 年 3 月 30 日：“十五五”规划纲要编制记<br />
+                3. 新华社，2026 年 3 月 5 日：“十五五”规划 109 项重大工程项目权威速览<br />
+                4. 新华社，2026 年 7 月 14 日：推进算力网建设观察<br />
+                5. 新华社，2026 年 5 月 9 日：能源强国建设相关报道
+              </div>
+
+              <div class="panel panel-pad panel-strong">
+                <div class="mini-card-title">版式说明</div>
+                <p class="source-meta">
+                  本页及整套 deck 采用你的 `T1` 模板做党政化改造：浅底、红金强调、规范标题栏、证据化配图，
+                  目的是兼顾正式感、可读性和课堂展示效果。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">
+            <span><strong>建议讲法：</strong>先讲历史方位，再讲产业科技抓手，最后落到民生与治理含义。</span>
+            <span>Slide 8</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      /* ===========================================
+         PRESENTATION CONTROLLER
+         键盘、触控、滚轮、导航点、进度条
+         =========================================== */
+      class SlidePresentation {
+        constructor() {
+          this.slides = Array.from(document.querySelectorAll(".slide"));
+          this.navDotsContainer = document.querySelector(".nav-dots");
+          this.progressBar = document.querySelector(".progress-bar");
+          this.currentSlide = 0;
+          this.isScrolling = false;
+          this.touchStartY = 0;
+          this.touchEndY = 0;
+          this.setupIntersectionObserver();
+          this.setupKeyboardNav();
+          this.setupTouchNav();
+          this.setupWheelNav();
+          this.setupProgressBar();
+          this.setupNavDots();
+          this.updateUI(0);
+        }
+
+        setupIntersectionObserver() {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  const index = this.slides.indexOf(entry.target);
+                  if (index !== -1) {
+                    this.currentSlide = index;
+                    this.updateUI(index);
+                  }
+                }
+              });
+            },
+            { threshold: 0.6 }
+          );
+
+          this.slides.forEach((slide) => observer.observe(slide));
+        }
+
+        setupKeyboardNav() {
+          document.addEventListener("keydown", (event) => {
+            if (["ArrowDown", "PageDown", " ", "ArrowRight"].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+            }
+            if (["ArrowUp", "PageUp", "ArrowLeft"].includes(event.key)) {
+              event.preventDefault();
+              this.goToSlide(Math.max(this.currentSlide - 1, 0));
+            }
+            if (event.key === "Home") this.goToSlide(0);
+            if (event.key === "End") this.goToSlide(this.slides.length - 1);
+          });
+        }
+
+        setupTouchNav() {
+          document.addEventListener(
+            "touchstart",
+            (event) => {
+              this.touchStartY = event.changedTouches[0].screenY;
+            },
+            { passive: true }
+          );
+
+          document.addEventListener(
+            "touchend",
+            (event) => {
+              this.touchEndY = event.changedTouches[0].screenY;
+              const delta = this.touchStartY - this.touchEndY;
+              if (Math.abs(delta) < 60) return;
+              if (delta > 0) {
+                this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+              } else {
+                this.goToSlide(Math.max(this.currentSlide - 1, 0));
+              }
+            },
+            { passive: true }
+          );
+        }
+
+        setupWheelNav() {
+          window.addEventListener(
+            "wheel",
+            (event) => {
+              if (this.isScrolling || Math.abs(event.deltaY) < 25) return;
+              this.isScrolling = true;
+              const nextIndex =
+                event.deltaY > 0
+                  ? Math.min(this.currentSlide + 1, this.slides.length - 1)
+                  : Math.max(this.currentSlide - 1, 0);
+              this.goToSlide(nextIndex);
+              window.setTimeout(() => {
+                this.isScrolling = false;
+              }, 650);
+            },
+            { passive: true }
+          );
+        }
+
+        setupProgressBar() {
+          window.addEventListener(
+            "scroll",
+            () => {
+              const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+              const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+              this.progressBar.style.width = `${progress}%`;
+            },
+            { passive: true }
+          );
+        }
+
+        setupNavDots() {
+          this.navDotsContainer.innerHTML = "";
+          this.slides.forEach((_, index) => {
+            const dot = document.createElement("button");
+            dot.className = "nav-dot";
+            dot.type = "button";
+            dot.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+            dot.addEventListener("click", () => this.goToSlide(index));
+            this.navDotsContainer.appendChild(dot);
+          });
+        }
+
+        goToSlide(index) {
+          this.slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
+          this.currentSlide = index;
+          this.updateUI(index);
+        }
+
+        updateUI(index) {
+          const dots = Array.from(this.navDotsContainer.querySelectorAll(".nav-dot"));
+          dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle("active", dotIndex === index);
+          });
+          const progress = (index / Math.max(this.slides.length - 1, 1)) * 100;
+          this.progressBar.style.width = `${progress}%`;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        new SlidePresentation();
+      });
+    </script>
+  </body>
+</html>

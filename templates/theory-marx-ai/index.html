@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人工智能的马克思主义解读</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+  
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Noto Sans SC", sans-serif;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+/* ===========================================
+   VIEWPORT FITTING: MANDATORY BASE STYLES
+   Include this ENTIRE file in every presentation.
+   These styles ensure slides fit exactly in the viewport.
+   =========================================== */
+
+/* 1. Lock html/body to viewport */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+/* 2. Each slide = exact viewport height */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    overflow: hidden; /* CRITICAL: Prevent ANY overflow */
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 3. Content container with flex for centering */
+.slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 100%;
+    overflow: hidden; /* Double-protection against overflow */
+    padding: var(--slide-padding);
+}
+
+/* 4. ALL typography uses clamp() for responsive scaling */
+:root {
+    /* Titles scale from mobile to desktop */
+    --title-size: clamp(1.5rem, 5vw, 4rem);
+    --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+
+    /* Body text */
+    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+    /* Spacing scales with viewport */
+    --slide-padding: clamp(1rem, 4vw, 4rem);
+    --content-gap: clamp(0.5rem, 2vw, 2rem);
+    --element-gap: clamp(0.25rem, 1vw, 1rem);
+}
+
+/* 5. Cards/containers use viewport-relative max sizes */
+.card, .container, .content-box {
+    max-width: min(90vw, 1000px);
+    max-height: min(80vh, 700px);
+}
+
+/* 6. Lists auto-scale with viewport */
+.feature-list, .bullet-list {
+    gap: clamp(0.4rem, 1vh, 1rem);
+}
+
+.feature-list li, .bullet-list li {
+    font-size: var(--body-size);
+    line-height: 1.4;
+}
+
+/* 7. Grids adapt to available space */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+/* 8. Images constrained to viewport */
+img, .image-container {
+    max-width: 100%;
+    max-height: min(50vh, 400px);
+    object-fit: contain;
+}
+
+/* ===========================================
+   RESPONSIVE BREAKPOINTS
+   Aggressive scaling for smaller viewports
+   =========================================== */
+
+/* Short viewports (< 700px height) */
+@media (max-height: 700px) {
+    :root {
+        --slide-padding: clamp(0.75rem, 3vw, 2rem);
+        --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+        --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+        --h2-size: clamp(1rem, 3vw, 1.75rem);
+    }
+}
+
+/* Very short viewports (< 600px height) */
+@media (max-height: 600px) {
+    :root {
+        --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+        --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+        --title-size: clamp(1.1rem, 4vw, 2rem);
+        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+    }
+
+    /* Hide non-essential elements */
+    .nav-dots, .keyboard-hint, .decorative {
+        display: none;
+    }
+}
+
+/* Extremely short (landscape phones, < 500px height) */
+@media (max-height: 500px) {
+    :root {
+        --slide-padding: clamp(0.4rem, 2vw, 1rem);
+        --title-size: clamp(1rem, 3.5vw, 1.5rem);
+        --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+    }
+}
+
+/* Narrow viewports (< 600px width) */
+@media (max-width: 600px) {
+    :root {
+        --title-size: clamp(1.25rem, 7vw, 2.5rem);
+    }
+
+    /* Stack grids vertically */
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===========================================
+   REDUCED MOTION
+   Respect user preferences
+   =========================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+
+:root {
+  --bg-canvas: #f5f8fc;
+  --bg-primary: #ffffff;
+  --bg-secondary: #ebf1f8;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: rgba(255, 255, 255, 0.94);
+  --surface-dark: rgba(17, 35, 67, 0.82);
+  --border-soft: rgba(27, 61, 107, 0.12);
+  --border-strong: rgba(27, 61, 107, 0.24);
+  --text-primary: #14243d;
+  --text-secondary: #52657f;
+  --accent: #2a5b9a;
+  --accent-strong: #d03732;
+  --accent-soft: rgba(42, 91, 154, 0.12);
+  --gold: #bd9650;
+  --shadow-soft: 0 22px 50px rgba(16, 44, 78, 0.08);
+  --shadow-card: 0 18px 40px rgba(18, 50, 90, 0.12);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --font-display: "Noto Serif SC", serif;
+  --font-body: "Noto Sans SC", sans-serif;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-normal: 0.65s;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(53, 112, 177, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(208, 55, 50, 0.08), transparent 28%);
+  pointer-events: none;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(20, 36, 61, 0.08);
+  z-index: 40;
+}
+
+.progress-bar__fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  transition: width 0.35s ease;
+}
+
+.nav-dots {
+  position: fixed;
+  right: clamp(0.7rem, 1.6vw, 1.2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.nav-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(25, 46, 78, 0.18);
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.nav-dot.active {
+  transform: scale(1.22);
+  background: var(--accent);
+}
+
+.slide {
+  padding: 0;
+  background: transparent;
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  max-width: min(1220px, 94vw);
+  margin: 0 auto;
+  gap: clamp(1rem, 2vw, 1.8rem);
+}
+
+.frame {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(12px);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo);
+}
+
+.slide.visible .reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--small-size);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 2.6rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.deck-title {
+  font-family: var(--font-display);
+  font-size: var(--title-size);
+  line-height: 1.08;
+  margin: 0;
+}
+
+.deck-subtitle {
+  max-width: 54rem;
+  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: stretch;
+}
+
+.hero-panel,
+.media-panel,
+.content-panel,
+.quote-panel,
+.grid-panel {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.hero-panel {
+  padding: clamp(1.5rem, 2.6vw, 2.4rem);
+  position: relative;
+}
+
+.hero-panel::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong), var(--gold));
+  opacity: 0.7;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.6vw, 1.35rem);
+  justify-content: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: min(44vh, 420px);
+  object-fit: cover;
+  border-radius: calc(var(--radius-xl) - 8px);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-card);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  line-height: 1.16;
+  margin: 0;
+}
+
+.section-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+  line-height: 1.78;
+}
+
+.chip-row,
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.chip,
+.tag {
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--small-size);
+  border: 1px solid rgba(42, 91, 154, 0.18);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+.metric-card,
+.bullet-card,
+.step-card,
+.catalog-card,
+.principle-card {
+  padding: clamp(1rem, 1.8vw, 1.3rem);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.metric-number {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.metric-label,
+.card-title {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  font-weight: 700;
+  margin: 0 0 0.45rem 0;
+}
+
+.card-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+  line-height: 1.7;
+}
+
+.card-grid.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+.card-grid.three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.4vw, 1.1rem);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.1rem);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 1rem 1rem 1rem 1.15rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-strong);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.timeline-year {
+  font-size: var(--small-size);
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
+}
+
+.quote-panel {
+  padding: clamp(1.6rem, 2.8vw, 2.4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.15rem;
+}
+
+.quote-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.1rem);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.quote-source {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+}
+
+.bullet-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.bullet-list li {
+  margin-bottom: 0.65rem;
+  line-height: 1.72;
+}
+
+.media-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.3vw, 1rem);
+}
+
+.media-stack img,
+.media-single img {
+  width: 100%;
+  height: min(26vh, 220px);
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+}
+
+.media-single img.tall {
+  height: min(44vh, 420px);
+}
+
+.hero-panel.media-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(0.85rem, 1.5vw, 1.1rem);
+}
+
+.hero-image.hero-image--feature {
+  height: min(46vh, 430px);
+}
+
+.hero-support-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1vw, 0.85rem);
+}
+
+.hero-support-row img,
+.media-quilt img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-lg) - 6px);
+  border: 1px solid var(--border-soft);
+}
+
+.hero-support-row img {
+  height: min(12vh, 92px);
+}
+
+.media-quilt {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.2vw, 1rem);
+}
+
+.media-quilt figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: clamp(0.75rem, 1.2vw, 0.95rem);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.media-quilt img {
+  height: min(17vh, 132px);
+}
+
+.media-quilt figcaption {
+  color: var(--text-secondary);
+  font-size: var(--small-size);
+  line-height: 1.55;
+}
+
+.visual-stack {
+  display: grid;
+  gap: clamp(0.8rem, 1.2vw, 1rem);
+}
+
+.signal-panel {
+  padding: clamp(1rem, 1.7vw, 1.25rem);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.signal-list {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.signal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  font-size: var(--small-size);
+  line-height: 1.55;
+}
+
+.signal-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.38rem;
+  border-radius: 999px;
+  background: var(--accent);
+  flex: none;
+}
+
+.foot-note {
+  font-size: var(--small-size);
+  color: var(--text-secondary);
+}
+
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.index-card {
+  display: block;
+  padding: 1.2rem 1.2rem 1rem;
+  border-radius: 18px;
+  text-decoration: none;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(27,61,107,0.12);
+  color: inherit;
+  box-shadow: var(--shadow-soft);
+}
+
+.index-card strong {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 960px) {
+  .split-layout,
+  .card-grid.two,
+  .card-grid.three,
+  .timeline,
+  .metrics,
+  .index-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .media-stack,
+  .media-quilt,
+  .hero-support-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .nav-dots {
+    display: none;
+  }
+
+  .media-stack,
+  .media-quilt,
+  .hero-support-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+  
+    :root {
+      --bg-canvas: #f6f4ef;
+      --surface: rgba(255, 252, 247, 0.88);
+      --surface-strong: rgba(255, 255, 255, 0.96);
+      --text-primary: #1d1d1f;
+      --text-secondary: #5e6168;
+      --accent: #2d3645;
+      --accent-strong: #8f96a3;
+      --accent-soft: rgba(45, 54, 69, 0.08);
+      --gold: #b89c74;
+      --border-soft: rgba(36, 36, 39, 0.10);
+    }
+    body::before {
+      background:
+        radial-gradient(circle at top left, rgba(88, 88, 93, 0.08), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(146, 148, 153, 0.08), transparent 26%);
+    }
+    .quote-panel {
+      border-left: 4px solid var(--accent);
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="progress-bar" aria-hidden="true"><div class="progress-bar__fill"></div></div>
+  <nav class="nav-dots" aria-label="幻灯片导航"></nav>
+  
+    <section class="slide">
+      <div class="slide-content split-layout">
+        <section class="hero-panel frame hero-copy">
+          <span class="eyebrow reveal">理论课程类 · T4 黑白理论讨论</span>
+          <h1 class="deck-title reveal">人工智能的马克思主义解读</h1>
+          <p class="deck-subtitle reveal">以“从人是机器到机器是人”为线索，讨论机器、资本、劳动与主体性的重新排列。</p>
+          <div class="chip-row reveal"><span class="chip">异化劳动</span><span class="chip">资本逻辑</span><span class="chip">数字劳动</span><span class="chip">主体性</span></div>
+        </section>
+        <section class="hero-panel frame media-hero">
+          <div class="media-single reveal">
+            <img class="hero-image hero-image--feature" src="assets/image2.png" alt="人工智能的马克思主义解读">
+          </div>
+          <div class="hero-support-row reveal">
+            <img src="assets/image1.png" alt="马克思">
+            <img src="assets/image19.png" alt="面对信息压力的人">
+          </div>
+        </section>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">核心页</span>
+        <h2 class="section-title reveal">这份课程报告的切口，不是技术史，而是人机关系的变化</h2>
+        <p class="section-text reveal">原 PPT 的核心判断很明确：机器不仅改变生产效率，也不断改变“人如何被定义”。</p>
+        <div class="split-layout">
+          <section class="content-panel">
+            <div class="card-grid two">
+            <article class="bullet-card reveal">
+              <h3 class="card-title">工业时代</h3>
+              <p class="card-text">机器延展人的体力，却也把工人推向更高强度、更细碎的被支配劳动。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">平台时代</h3>
+              <p class="card-text">算法和数据系统延展人的决策能力，同时又放大了依赖、沉溺和被计算。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">问题意识</h3>
+              <p class="card-text">技术不是中性的背景，它总是嵌在资本、制度和社会关系之中。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">讨论目标</h3>
+              <p class="card-text">不是简单赞成或反对 AI，而是分析 AI 在何种结构中塑造主体。</p>
+            </article>
+            </div>
+          </section>
+          <section class="content-panel">
+            <div class="media-quilt">
+              <figure class="reveal">
+                <img src="assets/image1.png" alt="马克思">
+                <figcaption>理论起点：人和技术的关系，从来不是自然给定的。</figcaption>
+              </figure>
+              <figure class="reveal">
+                <img src="assets/image2.png" alt="机器人">
+                <figcaption>AI 想象：系统不再只是工具，而开始承担判断与筛选。</figcaption>
+              </figure>
+              <figure class="reveal">
+                <img src="assets/image18.png" alt="工人劳动">
+                <figcaption>工业逻辑：机器提升效率，也同步提高劳动强度与可替代性。</figcaption>
+              </figure>
+              <figure class="reveal">
+                <img src="assets/image25.png" alt="工业时代火车">
+                <figcaption>轨道化生产：节奏、标准和纪律一起塑造了“现代人”的位置。</figcaption>
+              </figure>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">核心页</span>
+        <h2 class="section-title reveal">马克思主义视角下，机器首先改写的是劳动过程</h2>
+        <p class="section-text reveal">工业机器极大提高了生产力，但在资本主义条件下，工人也更容易沦为机器的附属物。</p>
+        <div class="split-layout">
+          <section class="content-panel">
+            <ul class="bullet-list reveal"><li>机器提高效率，工具不再严格受制于个体体力极限。</li><li>生产节奏被机器与资本重新组织，劳动者更难掌控劳动过程。</li><li>当人的价值被压缩为可替换的工序单元，异化就会加深。</li><li>原 PPT 用《摩登时代》、体力劳动和工业图像，把这一逻辑讲得很直观。</li></ul>
+          </section>
+          <section class="content-panel">
+            <section class='media-stack'><img src='assets/image18.png' alt='工人'><img src='assets/image25.png' alt='工业时代'></section>
+          </section>
+        </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">核心页</span>
+        <h2 class="section-title reveal">进入 AI 时代，“机器是人”的意味在于：系统开始替人判断、替人筛选、替人塑形</h2>
+        <p class="section-text reveal">原始素材把人工智能依赖、数据剥削、注意力控制放在同一条线上，这正适合 T4 的概念推进写法。</p>
+        <div class="split-layout">
+          <section class="content-panel">
+            <div class="card-grid two">
+            <article class="bullet-card reveal">
+              <h3 class="card-title">依赖扩大</h3>
+              <p class="card-text">人们逐渐把基础判断、信息整理和表达工作外包给智能系统。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">行为留痕</h3>
+              <p class="card-text">平台通过数据不断描摹用户画像，劳动与消费同时被再组织。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">选择边缘化</h3>
+              <p class="card-text">看似个性化推荐，实际让人更容易落入既定轨道。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">新型异化</h3>
+              <p class="card-text">劳动不只发生在工厂，也发生在注意力、点击与数据生产之中。</p>
+            </article>
+            </div>
+          </section>
+          <section class="content-panel visual-stack">
+            <div class="media-quilt">
+              <figure class="reveal">
+                <img src="assets/image2.png" alt="机器人系统">
+                <figcaption>替人判断：模型先于个体经验参与决策。</figcaption>
+              </figure>
+              <figure class="reveal">
+                <img src="assets/image19.png" alt="信息焦虑中的人">
+                <figcaption>认知外包：在信息过载中，人更容易把判断交给系统。</figcaption>
+              </figure>
+            </div>
+            <section class='signal-panel frame reveal'>
+              <p class='quote-text'>人工智能时代的问题，不是机器像不像人，而是人会不会越来越按照机器和平台的逻辑被组织。</p>
+              <div class="signal-list">
+                <div class="signal-item"><span class="signal-dot"></span><span>推荐与评分把“先看什么、信什么、选什么”前置成模型筛选。</span></div>
+                <div class="signal-item"><span class="signal-dot"></span><span>行为数据被持续积累，注意力、点击与表达本身也变成可计算劳动。</span></div>
+              </div>
+              <p class='quote-source'>基于原 PPT 的主旨重写</p>
+            </section>
+          </section>
+        </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">结构页</span>
+        <h2 class="section-title reveal">这份报告最值得保留的是四个理论节点</h2>
+        <p class="section-text reveal">如果要把课堂表达压得更稳，就把论证骨架收束成四个术语，再把材料往里填。</p>
+        <div class="card-grid two">
+            <article class="bullet-card reveal">
+              <h3 class="card-title">异化劳动</h3>
+              <p class="card-text">劳动者与劳动成果、劳动过程和自身本质发生疏离。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">资本与劳动对立</h3>
+              <p class="card-text">技术的使用方向取决于谁掌握资源、规则和分配权。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">数字劳动</h3>
+              <p class="card-text">数据、点击、内容生产与平台互动本身也构成价值生成。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">主体性问题</h3>
+              <p class="card-text">真正需要追问的，是人在技术系统中还能否保持判断、创造与协同能力。</p>
+            </article>
+            </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <section class="quote-panel frame">
+          <span class="eyebrow reveal">收束页</span>
+          <blockquote class="quote-text reveal">“理解人工智能，不只是理解技术对象，更是理解人在技术、资本与社会结构中的位置。”</blockquote>
+          <p class="quote-source reveal">素材来源：马原讨论《人工智能》PPT 内容重组</p>
+        </section>
+      </div>
+    </section>
+    
+  <script>
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll(".slide"));
+    this.progressBar = document.querySelector(".progress-bar__fill");
+    this.navDotsContainer = document.querySelector(".nav-dots");
+    this.currentSlide = 0;
+    this.touchStartY = 0;
+    this.touchEndY = 0;
+    this.isScrolling = false;
+    this.setupIntersectionObserver();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    this.setupNavDots();
+    this.updateProgress(0);
+  }
+
+  setupIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          this.currentSlide = this.slides.indexOf(entry.target);
+          this.updateProgress(this.currentSlide);
+          this.updateNavDots();
+        }
+      });
+    }, { threshold: 0.55 });
+
+    this.slides.forEach((slide) => observer.observe(slide));
+  }
+
+  setupKeyboardNav() {
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowDown", "PageDown", " ", "ArrowRight"].includes(event.key)) {
+        event.preventDefault();
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      }
+      if (["ArrowUp", "PageUp", "ArrowLeft"].includes(event.key)) {
+        event.preventDefault();
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        this.goToSlide(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        this.goToSlide(this.slides.length - 1);
+      }
+    });
+  }
+
+  setupWheelNav() {
+    window.addEventListener("wheel", (event) => {
+      if (this.isScrolling) return;
+      if (Math.abs(event.deltaY) < 30) return;
+      this.isScrolling = true;
+      if (event.deltaY > 0) {
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      } else {
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+      window.setTimeout(() => { this.isScrolling = false; }, 650);
+    }, { passive: true });
+  }
+
+  setupTouchNav() {
+    window.addEventListener("touchstart", (event) => {
+      this.touchStartY = event.changedTouches[0].screenY;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (event) => {
+      this.touchEndY = event.changedTouches[0].screenY;
+      const delta = this.touchStartY - this.touchEndY;
+      if (Math.abs(delta) < 50) return;
+      if (delta > 0) {
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      } else {
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+    }, { passive: true });
+  }
+
+  setupNavDots() {
+    if (!this.navDotsContainer) return;
+    this.navDotsContainer.innerHTML = "";
+    this.slides.forEach((slide, index) => {
+      const button = document.createElement("button");
+      button.className = "nav-dot";
+      button.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+      button.addEventListener("click", () => this.goToSlide(index));
+      this.navDotsContainer.appendChild(button);
+    });
+    this.updateNavDots();
+  }
+
+  updateNavDots() {
+    if (!this.navDotsContainer) return;
+    this.navDotsContainer.querySelectorAll(".nav-dot").forEach((dot, index) => {
+      dot.classList.toggle("active", index === this.currentSlide);
+    });
+  }
+
+  updateProgress(index) {
+    if (!this.progressBar) return;
+    const percent = this.slides.length <= 1 ? 100 : (index / (this.slides.length - 1)) * 100;
+    this.progressBar.style.width = `${percent}%`;
+  }
+
+  goToSlide(index) {
+    this.slides[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  new SlidePresentation();
+});
+</script>
+</body>
+</html>

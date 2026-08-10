@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猫图鉴与社群收藏型内容展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+  
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Noto Sans SC", sans-serif;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+/* ===========================================
+   VIEWPORT FITTING: MANDATORY BASE STYLES
+   Include this ENTIRE file in every presentation.
+   These styles ensure slides fit exactly in the viewport.
+   =========================================== */
+
+/* 1. Lock html/body to viewport */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+/* 2. Each slide = exact viewport height */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    overflow: hidden; /* CRITICAL: Prevent ANY overflow */
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 3. Content container with flex for centering */
+.slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 100%;
+    overflow: hidden; /* Double-protection against overflow */
+    padding: var(--slide-padding);
+}
+
+/* 4. ALL typography uses clamp() for responsive scaling */
+:root {
+    /* Titles scale from mobile to desktop */
+    --title-size: clamp(1.5rem, 5vw, 4rem);
+    --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+
+    /* Body text */
+    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+    /* Spacing scales with viewport */
+    --slide-padding: clamp(1rem, 4vw, 4rem);
+    --content-gap: clamp(0.5rem, 2vw, 2rem);
+    --element-gap: clamp(0.25rem, 1vw, 1rem);
+}
+
+/* 5. Cards/containers use viewport-relative max sizes */
+.card, .container, .content-box {
+    max-width: min(90vw, 1000px);
+    max-height: min(80vh, 700px);
+}
+
+/* 6. Lists auto-scale with viewport */
+.feature-list, .bullet-list {
+    gap: clamp(0.4rem, 1vh, 1rem);
+}
+
+.feature-list li, .bullet-list li {
+    font-size: var(--body-size);
+    line-height: 1.4;
+}
+
+/* 7. Grids adapt to available space */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+/* 8. Images constrained to viewport */
+img, .image-container {
+    max-width: 100%;
+    max-height: min(50vh, 400px);
+    object-fit: contain;
+}
+
+/* ===========================================
+   RESPONSIVE BREAKPOINTS
+   Aggressive scaling for smaller viewports
+   =========================================== */
+
+/* Short viewports (< 700px height) */
+@media (max-height: 700px) {
+    :root {
+        --slide-padding: clamp(0.75rem, 3vw, 2rem);
+        --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+        --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+        --h2-size: clamp(1rem, 3vw, 1.75rem);
+    }
+}
+
+/* Very short viewports (< 600px height) */
+@media (max-height: 600px) {
+    :root {
+        --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+        --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+        --title-size: clamp(1.1rem, 4vw, 2rem);
+        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+    }
+
+    /* Hide non-essential elements */
+    .nav-dots, .keyboard-hint, .decorative {
+        display: none;
+    }
+}
+
+/* Extremely short (landscape phones, < 500px height) */
+@media (max-height: 500px) {
+    :root {
+        --slide-padding: clamp(0.4rem, 2vw, 1rem);
+        --title-size: clamp(1rem, 3.5vw, 1.5rem);
+        --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+    }
+}
+
+/* Narrow viewports (< 600px width) */
+@media (max-width: 600px) {
+    :root {
+        --title-size: clamp(1.25rem, 7vw, 2.5rem);
+    }
+
+    /* Stack grids vertically */
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===========================================
+   REDUCED MOTION
+   Respect user preferences
+   =========================================== */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+
+:root {
+  --bg-canvas: #f5f8fc;
+  --bg-primary: #ffffff;
+  --bg-secondary: #ebf1f8;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-strong: rgba(255, 255, 255, 0.94);
+  --surface-dark: rgba(17, 35, 67, 0.82);
+  --border-soft: rgba(27, 61, 107, 0.12);
+  --border-strong: rgba(27, 61, 107, 0.24);
+  --text-primary: #14243d;
+  --text-secondary: #52657f;
+  --accent: #2a5b9a;
+  --accent-strong: #d03732;
+  --accent-soft: rgba(42, 91, 154, 0.12);
+  --gold: #bd9650;
+  --shadow-soft: 0 22px 50px rgba(16, 44, 78, 0.08);
+  --shadow-card: 0 18px 40px rgba(18, 50, 90, 0.12);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --font-display: "Noto Serif SC", serif;
+  --font-body: "Noto Sans SC", sans-serif;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-normal: 0.65s;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(53, 112, 177, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(208, 55, 50, 0.08), transparent 28%);
+  pointer-events: none;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(20, 36, 61, 0.08);
+  z-index: 40;
+}
+
+.progress-bar__fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  transition: width 0.35s ease;
+}
+
+.nav-dots {
+  position: fixed;
+  right: clamp(0.7rem, 1.6vw, 1.2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.nav-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(25, 46, 78, 0.18);
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.nav-dot.active {
+  transform: scale(1.22);
+  background: var(--accent);
+}
+
+.slide {
+  padding: 0;
+  background: transparent;
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  max-width: min(1220px, 94vw);
+  margin: 0 auto;
+  gap: clamp(1rem, 2vw, 1.8rem);
+}
+
+.frame {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(12px);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity var(--duration-normal) var(--ease-out-expo),
+    transform var(--duration-normal) var(--ease-out-expo);
+}
+
+.slide.visible .reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--small-size);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 2.6rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.deck-title {
+  font-family: var(--font-display);
+  font-size: var(--title-size);
+  line-height: 1.08;
+  margin: 0;
+}
+
+.deck-subtitle {
+  max-width: 54rem;
+  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: stretch;
+}
+
+.hero-panel,
+.media-panel,
+.content-panel,
+.quote-panel,
+.grid-panel {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.hero-panel {
+  padding: clamp(1.5rem, 2.6vw, 2.4rem);
+  position: relative;
+}
+
+.hero-panel::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong), var(--gold));
+  opacity: 0.7;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.6vw, 1.35rem);
+  justify-content: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: min(44vh, 420px);
+  object-fit: cover;
+  border-radius: calc(var(--radius-xl) - 8px);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-card);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  line-height: 1.16;
+  margin: 0;
+}
+
+.section-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+  line-height: 1.78;
+}
+
+.chip-row,
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.chip,
+.tag {
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--small-size);
+  border: 1px solid rgba(42, 91, 154, 0.18);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+.metric-card,
+.bullet-card,
+.step-card,
+.catalog-card,
+.principle-card {
+  padding: clamp(1rem, 1.8vw, 1.3rem);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.metric-number {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.metric-label,
+.card-title {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  font-weight: 700;
+  margin: 0 0 0.45rem 0;
+}
+
+.card-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+  line-height: 1.7;
+}
+
+.card-grid.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+.card-grid.three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.4vw, 1.1rem);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.1rem);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 1rem 1rem 1rem 1.15rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-strong);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.timeline-year {
+  font-size: var(--small-size);
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
+}
+
+.quote-panel {
+  padding: clamp(1.6rem, 2.8vw, 2.4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.15rem;
+}
+
+.quote-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3vw, 2.1rem);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.quote-source {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+}
+
+.bullet-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.bullet-list li {
+  margin-bottom: 0.65rem;
+  line-height: 1.72;
+}
+
+.media-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.3vw, 1rem);
+}
+
+.media-stack img,
+.media-single img {
+  width: 100%;
+  height: min(26vh, 220px);
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+}
+
+.media-single img.tall {
+  height: min(44vh, 420px);
+}
+
+.foot-note {
+  font-size: var(--small-size);
+  color: var(--text-secondary);
+}
+
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.index-card {
+  display: block;
+  padding: 1.2rem 1.2rem 1rem;
+  border-radius: 18px;
+  text-decoration: none;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(27,61,107,0.12);
+  color: inherit;
+  box-shadow: var(--shadow-soft);
+}
+
+.index-card strong {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 960px) {
+  .split-layout,
+  .card-grid.two,
+  .card-grid.three,
+  .timeline,
+  .metrics,
+  .index-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .media-stack {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .nav-dots {
+    display: none;
+  }
+
+  .media-stack {
+    grid-template-columns: 1fr;
+  }
+}
+
+  
+    :root {
+      --bg-canvas: #f7f0e5;
+      --surface: rgba(255, 249, 241, 0.86);
+      --surface-strong: rgba(255, 252, 247, 0.96);
+      --text-primary: #3e4736;
+      --text-secondary: #6b715e;
+      --accent: #647050;
+      --accent-strong: #b88e52;
+      --accent-soft: rgba(100, 112, 80, 0.10);
+      --gold: #b88e52;
+      --border-soft: rgba(100, 112, 80, 0.12);
+    }
+    body::before {
+      background:
+        radial-gradient(circle at top left, rgba(100, 112, 80, 0.10), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(184, 142, 82, 0.08), transparent 24%);
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="progress-bar" aria-hidden="true"><div class="progress-bar__fill"></div></div>
+  <nav class="nav-dots" aria-label="幻灯片导航"></nav>
+  
+    <section class="slide">
+      <div class="slide-content split-layout">
+        <section class="hero-panel frame hero-copy">
+          <span class="eyebrow reveal">社群作品集类 · 图鉴卡片型</span>
+          <h1 class="deck-title reveal">猫图鉴与社群收藏型内容展示</h1>
+          <p class="deck-subtitle reveal">以图鉴、标签和参与式收藏为主线，把一个猫品种百科改写成适合社群展示与作品沉淀的 HTML deck。</p>
+          <div class="chip-row reveal"><span class="chip">87 品种</span><span class="chip">图鉴卡片</span><span class="chip">新手友好</span><span class="chip">收藏路线</span></div>
+        </section>
+        <section class="hero-panel frame">
+          
+        <div class="media-single reveal">
+          <img class="hero-image" src="assets/cats-cover.png" alt="猫图鉴与社群收藏型内容展示">
+        </div>
+        
+        </section>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">结构页</span>
+        <h2 class="section-title reveal">这类网站最适合转成“目录系统”，而不是普通长文章</h2>
+        <p class="section-text reveal">用户真正需要的是快速筛选、比较与收藏，所以模板应该先服务检索，再服务叙事。</p>
+        <div class="metrics">
+            <article class="metric-card reveal">
+              <div class="metric-number">87</div>
+              <p class="metric-label">在站内可浏览的猫品种数</p>
+            </article>
+            
+            <article class="metric-card reveal">
+              <div class="metric-number">3</div>
+              <p class="metric-label">面向新手 / 进阶 / 收藏向的入口层级</p>
+            </article>
+            
+            <article class="metric-card reveal">
+              <div class="metric-number">多标签</div>
+              <p class="metric-label">性格、毛型、活跃度、照护难度等横向筛选维度</p>
+            </article>
+            </div><div class="chip-row reveal"><span class="chip">温和</span><span class="chip">高互动</span><span class="chip">短毛</span><span class="chip">长毛</span><span class="chip">稀有</span><span class="chip">新手友好</span><span class="chip">高颜值</span><span class="chip">社群热门</span></div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">结构页</span>
+        <h2 class="section-title reveal">如果给社群做“第一批推荐”，应该先推低门槛、辨识度高的品种</h2>
+        <p class="section-text reveal">这页故意做成图鉴卡片，不讲长段落，方便以后扩充到几十张卡。</p>
+        <div class="card-grid three">
+            <article class="catalog-card reveal">
+              <h3 class="card-title">美短 / 英短</h3>
+              <p class="card-text">圆脸、稳定、接受度高，适合新手作为第一波认知入口。</p>
+            </article>
+            
+            <article class="catalog-card reveal">
+              <h3 class="card-title">布偶</h3>
+              <p class="card-text">高识别度和温和气质，适合做社群海报与封面角色。</p>
+            </article>
+            
+            <article class="catalog-card reveal">
+              <h3 class="card-title">暹罗</h3>
+              <p class="card-text">互动性强、辨识度高，适合放在“性格鲜明”分组下。</p>
+            </article>
+            </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">结构页</span>
+        <h2 class="section-title reveal">进阶玩家更关心的是稀有度、性格差异和照护条件</h2>
+        <p class="section-text reveal">从百科素材往社群作品集迁移时，可以把“冷门品种”做成更强的收藏驱动力。</p>
+        <div class="card-grid three">
+            <article class="catalog-card reveal">
+              <h3 class="card-title">孟加拉</h3>
+              <p class="card-text">豹纹感强、视觉吸引高，适合做高热度展示卡。</p>
+            </article>
+            
+            <article class="catalog-card reveal">
+              <h3 class="card-title">缅因</h3>
+              <p class="card-text">体型大、毛量足，适合做“明星品种”或头图角色。</p>
+            </article>
+            
+            <article class="catalog-card reveal">
+              <h3 class="card-title">无毛 / 小众混血</h3>
+              <p class="card-text">适合放进进阶路线，强调照护门槛与社群讨论价值。</p>
+            </article>
+            </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <span class="eyebrow reveal">核心页</span>
+        <h2 class="section-title reveal">把它做成作品集时，最有价值的不是“品种百科”，而是“可持续扩充的展示系统”</h2>
+        <p class="section-text reveal">这也是你后面沉淀模板资产时真正能复用的地方。</p>
+        <div class="split-layout">
+          <section class="content-panel">
+            <div class="card-grid three">
+            <article class="bullet-card reveal">
+              <h3 class="card-title">卡片模板</h3>
+              <p class="card-text">每张卡固定包含主图、品种名、性格标签、照护等级和一句简介。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">目录模板</h3>
+              <p class="card-text">按照热门、新手、进阶、毛型、地区等维度拆分类页。</p>
+            </article>
+            
+            <article class="bullet-card reveal">
+              <h3 class="card-title">社群模板</h3>
+              <p class="card-text">加入成员收藏、活动推荐、打卡记录，让百科变成参与式作品集。</p>
+            </article>
+            </div>
+          </section>
+          <section class="content-panel">
+            <section class='quote-panel frame reveal'><p class='quote-text'>社群型 deck 的价值，不是一次展示，而是为持续更新留出稳定版式。</p><p class='quote-source'>图鉴卡片型模板原则</p></section>
+          </section>
+        </div>
+      </div>
+    </section>
+    
+    <section class="slide">
+      <div class="slide-content">
+        <section class="quote-panel frame">
+          <span class="eyebrow reveal">收束页</span>
+          <blockquote class="quote-text reveal">“一套好的社群作品集模板，应该让资料越积越多，但页面依然一目了然。”</blockquote>
+          <p class="quote-source reveal">素材基底：br-choku 猫图鉴场景 + 社群作品集类模板语法</p>
+        </section>
+      </div>
+    </section>
+    
+  <script>
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll(".slide"));
+    this.progressBar = document.querySelector(".progress-bar__fill");
+    this.navDotsContainer = document.querySelector(".nav-dots");
+    this.currentSlide = 0;
+    this.touchStartY = 0;
+    this.touchEndY = 0;
+    this.isScrolling = false;
+    this.setupIntersectionObserver();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    this.setupNavDots();
+    this.updateProgress(0);
+  }
+
+  setupIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          this.currentSlide = this.slides.indexOf(entry.target);
+          this.updateProgress(this.currentSlide);
+          this.updateNavDots();
+        }
+      });
+    }, { threshold: 0.55 });
+
+    this.slides.forEach((slide) => observer.observe(slide));
+  }
+
+  setupKeyboardNav() {
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowDown", "PageDown", " ", "ArrowRight"].includes(event.key)) {
+        event.preventDefault();
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      }
+      if (["ArrowUp", "PageUp", "ArrowLeft"].includes(event.key)) {
+        event.preventDefault();
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        this.goToSlide(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        this.goToSlide(this.slides.length - 1);
+      }
+    });
+  }
+
+  setupWheelNav() {
+    window.addEventListener("wheel", (event) => {
+      if (this.isScrolling) return;
+      if (Math.abs(event.deltaY) < 30) return;
+      this.isScrolling = true;
+      if (event.deltaY > 0) {
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      } else {
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+      window.setTimeout(() => { this.isScrolling = false; }, 650);
+    }, { passive: true });
+  }
+
+  setupTouchNav() {
+    window.addEventListener("touchstart", (event) => {
+      this.touchStartY = event.changedTouches[0].screenY;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (event) => {
+      this.touchEndY = event.changedTouches[0].screenY;
+      const delta = this.touchStartY - this.touchEndY;
+      if (Math.abs(delta) < 50) return;
+      if (delta > 0) {
+        this.goToSlide(Math.min(this.currentSlide + 1, this.slides.length - 1));
+      } else {
+        this.goToSlide(Math.max(this.currentSlide - 1, 0));
+      }
+    }, { passive: true });
+  }
+
+  setupNavDots() {
+    if (!this.navDotsContainer) return;
+    this.navDotsContainer.innerHTML = "";
+    this.slides.forEach((slide, index) => {
+      const button = document.createElement("button");
+      button.className = "nav-dot";
+      button.setAttribute("aria-label", `跳转到第 ${index + 1} 页`);
+      button.addEventListener("click", () => this.goToSlide(index));
+      this.navDotsContainer.appendChild(button);
+    });
+    this.updateNavDots();
+  }
+
+  updateNavDots() {
+    if (!this.navDotsContainer) return;
+    this.navDotsContainer.querySelectorAll(".nav-dot").forEach((dot, index) => {
+      dot.classList.toggle("active", index === this.currentSlide);
+    });
+  }
+
+  updateProgress(index) {
+    if (!this.progressBar) return;
+    const percent = this.slides.length <= 1 ? 100 : (index / (this.slides.length - 1)) * 100;
+    this.progressBar.style.width = `${percent}%`;
+  }
+
+  goToSlide(index) {
+    this.slides[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  new SlidePresentation();
+});
+</script>
+</body>
+</html>
