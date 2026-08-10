@@ -1,0 +1,8 @@
+interface:
+  display_name: "HTML Slide Template Library"
+  short_description: "Route slide tasks into six template families before generation."
+  brand_color: "#2A5B9A"
+  default_prompt: "Use $html-slide-template-library to recommend the best template direction for this slide task before generating the deck."
+
+policy:
+  allow_implicit_invocation: true

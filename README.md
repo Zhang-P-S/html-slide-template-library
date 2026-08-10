@@ -1,6 +1,6 @@
 # html-slide-template-library
 
-Standalone HTML slide templates for reusable presentation scenarios.
+A shareable Codex skill for **template selection and style routing** before HTML slide generation.
 
 **Language / 语言**
 
@@ -14,184 +14,122 @@ Standalone HTML slide templates for reusable presentation scenarios.
 
 Switch language: [简体中文](#zh-cn)
 
-### Overview
+### What This Repository Actually Is
 
-`html-slide-template-library` is a clean, standalone repository of shareable HTML slide templates distilled from my own presentation work.
+This repository is the **skill body itself**, not a gallery of finished example decks.
 
-It focuses on six recurring scenarios:
+Its job is to help Codex:
 
-- Academic defense
-- Policy briefing
-- Engineering and technical explanation
-- Theory and classroom discussion
-- Innovation roadshow
-- Community and collectible showcase
+- classify a slide task into one of six presentation families
+- recommend 3 to 6 template directions from this library
+- explain which direction is the safe default
+- hand off a concrete style brief to a downstream slide generator
 
-All templates are plain HTML bundles with local assets. There is no build step, no framework dependency, and no bundled third-party skill code.
+This repository is for **template choice first**, not for directly shipping six demo HTML files.
 
-### What This Repository Is
+### What The Skill Covers
 
-This repository is intended to be:
+The skill routes slide tasks into these six families:
 
-- a personal HTML slide template library
-- a reusable base for future slide-generation workflows
-- a clean open-source artifact that can be shared independently
+1. Academic defense
+2. Policy and governance
+3. Engineering and technology
+4. Theory and coursework
+5. Innovation roadshow
+6. Community portfolio
 
-This repository is not:
+Each family contains three subtemplate directions, for a total of 18 first-party directions in this repository.
 
-- a dump of Codex system skills
-- a mirror of third-party template packs
-- a mixed workspace archive
-- a collection of temporary export artifacts
+### What Is Included
 
-### Included Templates
+| Path | Purpose |
+| --- | --- |
+| `SKILL.md` | Trigger conditions, workflow, and handoff contract |
+| `agents/openai.yaml` | UI metadata for the skill |
+| `references/selection-workflow.md` | How Codex should shortlist and compare directions |
+| `references/template-families.md` | The six families and all 18 subtemplate directions |
+| `references/style-dna.md` | The owner's stable narrative and visual defaults |
+| `assets/previews/` | Preview boards for the six top-level families |
 
-#### Core template scenarios
+### What Is Not Included
 
-| Scenario | Directory | Notes |
-| --- | --- | --- |
-| Academic defense | `templates/academic-defense-qwen3/` | Evidence-first, blue-white, paper-presentation style |
-| Policy briefing | `templates/policy-plan15/` | Red-gold institutional briefing style |
-| Engineering / technical | `templates/engineering-quadcopter/` | Structured grid, modular technical explanation |
-| Theory / classroom | `templates/theory-marx-ai/` | Editorial black-white-light discussion style |
-| Innovation roadshow | `templates/innovation-aerospace/` | Capability-matrix storytelling and pitch framing |
-| Community / catalog | `templates/community-cat-catalog/` | Card-based collectible and showcase direction |
+This repository intentionally does **not** treat the following as the main product:
 
-#### Additional example
+- finished example decks as the skill body
+- third-party skill code
+- Codex system skill contents
+- deployment scripts
+- HTML-to-PPT conversion logic
 
-| Example | Directory | Notes |
-| --- | --- | --- |
-| Community adaptation example | `examples/community-eevee-pokedex/` | A Pokemon Pokedex adaptation based on the community showcase direction |
+If you want actual HTML slide generation after template choice, pair this skill with your generator workflow, for example `frontend-slides`.
 
-### Repository Structure
+### Install
+
+Clone or copy this repository into your Codex skills directory:
 
 ```text
-html-slide-template-library/
-|- templates/
-|  |- academic-defense-qwen3/
-|  |  |- index.html
-|  |  `- assets/
-|  |- policy-plan15/
-|  |  |- index.html
-|  |  `- assets/
-|  |- engineering-quadcopter/
-|  |  |- index.html
-|  |  `- assets/
-|  |- theory-marx-ai/
-|  |  |- index.html
-|  |  `- assets/
-|  |- innovation-aerospace/
-|  |  |- index.html
-|  |  `- assets/
-|  `- community-cat-catalog/
-|     |- index.html
-|     `- assets/
-|- examples/
-|  `- community-eevee-pokedex/
-|     |- index.html
-|     `- assets/
-|- assets/
-|  `- readme/
-|     `- screenshots used in this README
-|- README.md
-`- LICENSE
+$CODEX_HOME/skills/html-slide-template-library
 ```
 
-### Routing Guide
+On Windows, a common location is:
 
-Choose a starting template by content type:
+```text
+C:\Users\<you>\.codex\skills\html-slide-template-library
+```
 
-| If the content is mainly... | Start here |
-| --- | --- |
-| research findings, evidence walls, method/result explanation | `academic-defense-qwen3` |
-| policy interpretation, state planning, institutional public briefing | `policy-plan15` |
-| system structure, mechanism explanation, engineering principle | `engineering-quadcopter` |
-| concept-heavy, argumentative, classroom or discussion-led | `theory-marx-ai` |
-| pitch-like storytelling, capability framing, innovation narrative | `innovation-aerospace` |
-| catalog, collection, community showcase, fandom-style display | `community-cat-catalog` |
+After placement, Codex can discover the skill by folder name.
 
-### Example Gallery
+### How It Works
 
-The following screenshots were renamed from raw workspace exports to stable, content-based filenames.
+The intended interaction is:
+
+1. The user asks for a slide deck, or asks to use this template library.
+2. Codex uses this skill to classify the task into one of the six families.
+3. Codex recommends 3 to 6 candidate directions from this repository.
+4. Codex explains each candidate in a fixed format:
+   - Template
+   - Why it fits
+   - What it will look like
+   - Risk
+5. The user chooses one direction, one primary plus one secondary, or lets Codex pick the safest default.
+6. Codex then passes that chosen direction into a deck-generation workflow.
+
+### Preview Gallery
+
+These preview boards represent the six top-level families that this skill routes through.
 
 #### 1. Academic defense
 
-`assets/readme/01-academic-defense-reranker-ablation.png`
+![Academic defense preview](assets/previews/01-academic-defense-preview.png)
 
-![Academic defense example](assets/readme/01-academic-defense-reranker-ablation.png)
+#### 2. Policy and governance
 
-#### 2. Policy briefing
+![Policy and governance preview](assets/previews/02-policy-and-governance-preview.png)
 
-`assets/readme/02-policy-plan15-cover.png`
+#### 3. Engineering and technology
 
-![Policy briefing example](assets/readme/02-policy-plan15-cover.png)
+![Engineering and technology preview](assets/previews/03-engineering-and-technology-preview.png)
 
-#### 3. Engineering / technical explanation
+#### 4. Theory and coursework
 
-`assets/readme/03-engineering-quadcopter-advantage-grid.png`
-
-![Engineering template example](assets/readme/03-engineering-quadcopter-advantage-grid.png)
-
-#### 4. Theory / classroom discussion
-
-`assets/readme/04-theory-marx-labor-process.png`
-
-![Theory discussion example](assets/readme/04-theory-marx-labor-process.png)
+![Theory and coursework preview](assets/previews/04-theory-and-coursework-preview.png)
 
 #### 5. Innovation roadshow
 
-`assets/readme/05-innovation-aerospace-capability-matrix.png`
+![Innovation roadshow preview](assets/previews/05-innovation-roadshow-preview.png)
 
-![Innovation roadshow example](assets/readme/05-innovation-aerospace-capability-matrix.png)
+#### 6. Community portfolio
 
-#### 6. Community adaptation example
+![Community portfolio preview](assets/previews/06-community-portfolio-preview.png)
 
-`assets/readme/06-community-eevee-eeveelutions.png`
+### Recommended Use
 
-![Community adaptation example](assets/readme/06-community-eevee-eeveelutions.png)
+Use this skill when:
 
-### How To Use
-
-#### Open a template directly
-
-Each template is self-contained. Open `index.html` in a browser:
-
-- `templates/academic-defense-qwen3/index.html`
-- `templates/policy-plan15/index.html`
-- `templates/engineering-quadcopter/index.html`
-- `templates/theory-marx-ai/index.html`
-- `templates/innovation-aerospace/index.html`
-- `templates/community-cat-catalog/index.html`
-
-#### Reuse as a starting point
-
-Recommended workflow:
-
-1. Pick the closest scenario directory.
-2. Duplicate the whole folder.
-3. Replace text and local assets inside that duplicated folder.
-4. Keep relative asset paths unchanged when possible.
-5. Export screenshots or publish the folder directly.
-
-### Design Principles
-
-These templates follow a few stable constraints:
-
-- self-contained HTML first
-- local assets over remote dependencies
-- scenario routing before visual styling
-- structured layouts that survive real presentation density
-- reusable visual language rather than one-off decoration
-
-### Boundary Statement
-
-This repository intentionally excludes:
-
-- Codex system skill files
-- external bundled skill definitions
-- unrelated workspace artifacts
-- temporary PPT export folders not required by the HTML templates
-- generated files whose only purpose was local testing
+- the user asks for template recommendations before generation
+- the user asks to follow this personal slide system
+- the task should be routed by scenario instead of by vague mood labels
+- you want a stable, reusable selection layer before generating HTML slides
 
 ### License
 
@@ -207,184 +145,125 @@ Back to top: [English](#english) | [简体中文](#zh-cn)
 
 切换语言：[English](#english)
 
-### 仓库说明
+### 这个仓库真正是什么
 
-`html-slide-template-library` 是一个独立的 HTML 幻灯片模板仓库，沉淀自我个人的演示文稿实践。
+这个仓库是一个 **Codex skill 本体**，不是 6 个演示 HTML 成品的陈列仓库。
 
-它聚焦六类高频场景：
+它的职责是帮助 Codex：
 
-- 学术答辩
-- 党政政策解读
-- 工程技术讲解
-- 理论课程讨论
-- 创新路演展示
-- 社群与收藏型展示
+- 先把用户的 slide 任务归类到六大模板体系之一
+- 从这套体系里推荐 3 到 6 个模板方向
+- 说明哪个方向是最稳妥的默认项
+- 把最终选中的方向交给后续生成工作流继续产出 HTML slide
 
-所有模板都采用纯 HTML 加本地静态资源的方式组织，不依赖构建流程，不依赖前端框架，也不包含第三方 skill 代码。
+也就是说，这个仓库的核心是 **模板选择与风格路由**，不是示例页面本身。
 
-### 这个仓库是什么
+### 这个 skill 管什么
 
-这个仓库的定位是：
+这个 skill 把 slide 任务统一路由到六大类：
 
-- 个人可复用的 HTML 幻灯片模板库
-- 后续生成式幻灯片工作流的基础资产
-- 可以独立分享的干净开源仓库
+1. 学术答辩类
+2. 党政政策类
+3. 工程技术类
+4. 理论课程类
+5. 创新路演类
+6. 社群作品集类
 
-这个仓库不包含：
+每一类下面再细分为 3 个子方向，总计 18 个一方模板方向，全部都来自这个仓库自身。
 
+### 仓库包含什么
+
+| 路径 | 作用 |
+| --- | --- |
+| `SKILL.md` | skill 的触发条件、使用流程和下游交接规则 |
+| `agents/openai.yaml` | skill 的 UI 元数据 |
+| `references/selection-workflow.md` | Codex 应该怎样做模板推荐与对比 |
+| `references/template-families.md` | 六大类与 18 个子模板方向的完整定义 |
+| `references/style-dna.md` | 这套个人 slide 系统的稳定风格共性 |
+| `assets/previews/` | 六大类总览预览板 |
+
+### 仓库不把什么当主体
+
+这个仓库明确不把下面这些内容当成 skill 主体：
+
+- 6 个现成 HTML 示例页面
+- 第三方 skill 代码
 - Codex 系统 skill 内容
-- 第三方模板包镜像
-- 混杂的工作区归档文件
-- 临时导出产物堆积
+- 在线部署脚本
+- HTML 转 PPT 的实现逻辑
 
-### 模板内容
+如果后续需要真的生成 HTML slide，可以把这个 skill 和生成工作流搭配使用，例如 `frontend-slides`。
 
-#### 六类核心模板
+### 安装方式
 
-| 场景 | 目录 | 说明 |
-| --- | --- | --- |
-| 学术答辩类 | `templates/academic-defense-qwen3/` | 偏证据墙与论文汇报的蓝白风格 |
-| 党政政策类 | `templates/policy-plan15/` | 红金色制度化政策汇报风格 |
-| 工程技术类 | `templates/engineering-quadcopter/` | 结构化网格、适合系统与原理讲解 |
-| 理论课程类 | `templates/theory-marx-ai/` | 黑白浅色编辑感，适合讨论与论述 |
-| 创新路演类 | `templates/innovation-aerospace/` | 强叙事和能力矩阵表达的路演风格 |
-| 社群作品集类 | `templates/community-cat-catalog/` | 卡片式收藏展示与兴趣社群表达 |
-
-#### 附加示例
-
-| 示例 | 目录 | 说明 |
-| --- | --- | --- |
-| 社群方向改编示例 | `examples/community-eevee-pokedex/` | 基于社群展示方向制作的伊布图鉴示例 |
-
-### 仓库结构
+把这个仓库克隆或复制到 Codex skills 目录下：
 
 ```text
-html-slide-template-library/
-|- templates/
-|  |- academic-defense-qwen3/
-|  |  |- index.html
-|  |  `- assets/
-|  |- policy-plan15/
-|  |  |- index.html
-|  |  `- assets/
-|  |- engineering-quadcopter/
-|  |  |- index.html
-|  |  `- assets/
-|  |- theory-marx-ai/
-|  |  |- index.html
-|  |  `- assets/
-|  |- innovation-aerospace/
-|  |  |- index.html
-|  |  `- assets/
-|  `- community-cat-catalog/
-|     |- index.html
-|     `- assets/
-|- examples/
-|  `- community-eevee-pokedex/
-|     |- index.html
-|     `- assets/
-|- assets/
-|  `- readme/
-|     `- 本 README 使用的示例截图
-|- README.md
-`- LICENSE
+$CODEX_HOME/skills/html-slide-template-library
 ```
 
-### 选型指引
+Windows 常见路径是：
 
-如果你的内容更接近下面这些表达目标，可以直接从对应模板开始：
+```text
+C:\Users\<你自己的用户名>\.codex\skills\html-slide-template-library
+```
 
-| 如果内容主要是... | 建议起点 |
-| --- | --- |
-| 研究结论、实验结果、方法与对比说明 | `academic-defense-qwen3` |
-| 政策解读、规划部署、制度型公开汇报 | `policy-plan15` |
-| 系统结构、机制原理、工程技术拆解 | `engineering-quadcopter` |
-| 概念论述、课堂讨论、理论密度较高内容 | `theory-marx-ai` |
-| 路演叙事、能力表达、创新项目包装 | `innovation-aerospace` |
-| 图鉴、收藏、角色展示、社群兴趣内容 | `community-cat-catalog` |
+放到这个目录后，Codex 就可以按文件夹名发现这个 skill。
 
-### 示例画廊
+### 这个 skill 怎么工作
 
-下面这些截图来自工作区原始导出图，已经按内容重新命名，方便在 README 中稳定引用。
+推荐使用流程如下：
+
+1. 用户提出一个 slide 任务，或者明确说要用这套模板库。
+2. Codex 用这个 skill 先判断它属于六大类中的哪一类。
+3. Codex 从仓库内推荐 3 到 6 个候选方向。
+4. 每个候选都按固定格式说明：
+   - Template
+   - Why it fits
+   - What it will look like
+   - Risk
+5. 用户再选择：
+   - 一个方向
+   - 一个主方向加一个副方向
+   - 或者让 Codex 直接选最稳妥默认项
+6. 确认方向后，再交给后续生成流程产出真正的 deck。
+
+### 预览总览
+
+下面这些预览板对应这个 skill 的六大顶层模板类目。
 
 #### 1. 学术答辩类
 
-`assets/readme/01-academic-defense-reranker-ablation.png`
-
-![学术答辩示例](assets/readme/01-academic-defense-reranker-ablation.png)
+![学术答辩类预览](assets/previews/01-academic-defense-preview.png)
 
 #### 2. 党政政策类
 
-`assets/readme/02-policy-plan15-cover.png`
-
-![党政政策示例](assets/readme/02-policy-plan15-cover.png)
+![党政政策类预览](assets/previews/02-policy-and-governance-preview.png)
 
 #### 3. 工程技术类
 
-`assets/readme/03-engineering-quadcopter-advantage-grid.png`
-
-![工程技术示例](assets/readme/03-engineering-quadcopter-advantage-grid.png)
+![工程技术类预览](assets/previews/03-engineering-and-technology-preview.png)
 
 #### 4. 理论课程类
 
-`assets/readme/04-theory-marx-labor-process.png`
-
-![理论课程示例](assets/readme/04-theory-marx-labor-process.png)
+![理论课程类预览](assets/previews/04-theory-and-coursework-preview.png)
 
 #### 5. 创新路演类
 
-`assets/readme/05-innovation-aerospace-capability-matrix.png`
+![创新路演类预览](assets/previews/05-innovation-roadshow-preview.png)
 
-![创新路演示例](assets/readme/05-innovation-aerospace-capability-matrix.png)
+#### 6. 社群作品集类
 
-#### 6. 社群改编示例
+![社群作品集类预览](assets/previews/06-community-portfolio-preview.png)
 
-`assets/readme/06-community-eevee-eeveelutions.png`
+### 适用场景
 
-![社群改编示例](assets/readme/06-community-eevee-eeveelutions.png)
+下面这些情况适合直接触发这个 skill：
 
-### 使用方式
-
-#### 直接打开模板
-
-每套模板都可以独立使用，直接在浏览器中打开对应的 `index.html` 即可：
-
-- `templates/academic-defense-qwen3/index.html`
-- `templates/policy-plan15/index.html`
-- `templates/engineering-quadcopter/index.html`
-- `templates/theory-marx-ai/index.html`
-- `templates/innovation-aerospace/index.html`
-- `templates/community-cat-catalog/index.html`
-
-#### 作为起点进行复用
-
-推荐流程：
-
-1. 先选最接近内容场景的模板目录。
-2. 整个复制该目录。
-3. 在复制后的目录中替换文本和本地图片资源。
-4. 尽量保持相对路径结构不变。
-5. 最后直接发布文件夹，或导出截图继续使用。
-
-### 设计原则
-
-这些模板遵循几条稳定原则：
-
-- 以自包含 HTML 为优先
-- 优先使用本地静态资源
-- 先按场景分流，再做视觉风格选择
-- 排版结构要能承受真实信息密度
-- 追求可复用的视觉语言，而不是一次性装饰
-
-### 边界说明
-
-这个仓库明确排除了以下内容：
-
-- Codex 系统 skill 文件
-- 外部打包进来的 skill 定义
-- 与本模板库无关的工作区文件
-- HTML 模板不需要的临时 PPT 导出文件夹
-- 仅用于本地测试的生成文件
+- 用户在生成前想先看模板推荐
+- 用户要求沿用这套个人 slide 系统
+- 任务更适合按场景路由，而不是只按“专业、现代、极简”这种模糊词来选
+- 你希望先有一层稳定的模板选择，再进入 HTML slide 生成
 
 ### 许可证
 
