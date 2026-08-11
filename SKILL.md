@@ -37,11 +37,20 @@ If the user asks to generate slides after choosing a direction, hand the chosen 
 For every task, read:
 
 - [references/selection-workflow.md](references/selection-workflow.md)
-- [references/template-families.md](references/template-families.md)
+- [references/template-index.md](references/template-index.md)
 
 If the user asks to follow the owner's established style, also read:
 
 - [references/style-dna.md](references/style-dna.md)
+
+After identifying the primary family, read the matching family file:
+
+- `academic-defense` -> [references/academic-defense.md](references/academic-defense.md)
+- `policy-and-governance` -> [references/policy-and-governance.md](references/policy-and-governance.md)
+- `engineering-and-technology` -> [references/engineering-and-technology.md](references/engineering-and-technology.md)
+- `theory-and-coursework` -> [references/theory-and-coursework.md](references/theory-and-coursework.md)
+- `innovation-roadshow` -> [references/innovation-roadshow.md](references/innovation-roadshow.md)
+- `community-portfolio` -> [references/community-portfolio.md](references/community-portfolio.md)
 
 ## Workflow
 
@@ -52,18 +61,19 @@ If the user asks to follow the owner's established style, also read:
    - theory-and-coursework
    - innovation-roadshow
    - community-portfolio
-2. Shortlist 3 to 6 directions from this library only.
-3. Explain each candidate in this format:
+2. Read the matching family file before making concrete recommendations.
+3. Shortlist 3 to 6 directions from this library only.
+4. Explain each candidate in this format:
    - `Template`
    - `Why it fits`
    - `What it will look like`
    - `Risk`
-4. Mark one option as the safe default unless the task is ambiguous.
-5. Ask the user to:
+5. Mark one option as the safe default unless the task is ambiguous.
+6. Ask the user to:
    - choose one direction
    - choose one primary plus one secondary
    - or let Codex pick the safest default
-6. After a direction is chosen, output a compact build brief:
+7. After a direction is chosen, output a compact build brief:
    - family
    - subtemplate
    - palette
@@ -72,6 +82,8 @@ If the user asks to follow the owner's established style, also read:
    - content-page grammar
    - image guidance
    - density guidance
+   - visual elements to preserve
+   - visual patterns to avoid
 
 ## Selection Rules
 
@@ -105,4 +117,4 @@ When handing off to a generator, give it:
 
 ## Repository Assumption
 
-This repository is the skill body itself. Treat files in `references/` and `assets/previews/` as the source of truth for routing and preview explanation.
+This repository is the skill body itself. Treat `references/` as the routing logic and `assets/previews/` as the real visual examples used to explain the six top-level families.

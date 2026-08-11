@@ -10,10 +10,11 @@ Use this sequence:
 
 1. identify the presentation task
 2. map it to one primary family
-3. shortlist 3 to 6 template directions from this repository
-4. explain the shortlist in a fixed comparison format
-5. ask the user to confirm one direction
-6. emit a concise build brief for the downstream generator
+3. read the matching family reference before making detailed recommendations
+4. shortlist 3 to 6 template directions from this repository
+5. explain the shortlist in a fixed comparison format
+6. ask the user to confirm one direction
+7. emit a concise build brief for the downstream generator
 
 ## Six Families
 
@@ -23,6 +24,15 @@ Use this sequence:
 4. `theory-and-coursework`
 5. `innovation-roadshow`
 6. `community-portfolio`
+
+After identifying the family, read the corresponding file:
+
+- `academic-defense` -> `references/academic-defense.md`
+- `policy-and-governance` -> `references/policy-and-governance.md`
+- `engineering-and-technology` -> `references/engineering-and-technology.md`
+- `theory-and-coursework` -> `references/theory-and-coursework.md`
+- `innovation-roadshow` -> `references/innovation-roadshow.md`
+- `community-portfolio` -> `references/community-portfolio.md`
 
 ## Recommended Response Format
 

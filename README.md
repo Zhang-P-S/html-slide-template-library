@@ -82,6 +82,16 @@ It first responds like a strong design partner:
 4. You choose one, mix two, or let Codex pick the safest option.
 5. Only then does the actual slide generation begin.
 
+## Install Prompt
+
+If you want Codex to install this repository as a usable skill, the easiest way is to give it a direct instruction instead of manually explaining the folder structure.
+
+Use a prompt like this:
+
+```text
+Install https://github.com/Zhang-P-S/html-slide-template-library as a local Codex skill, make it available as $html-slide-template-library, and use it as a template-routing layer before generating any slide deck.
+```
+
 ## Example Prompts
 
 You can invoke it explicitly or let Codex trigger it naturally.
@@ -120,33 +130,35 @@ Best when the deck needs momentum, project framing, launch energy, highlights, o
 
 Best when the deck is catalog-like, character-driven, fandom-oriented, collection-based, or meant to feel browseable and social.
 
-## Preview Boards
+## Real Preview Slides
 
-These six boards represent the top-level families inside the skill.
+These previews are not AI mood boards.
+
+They are real slides captured from actual decks inside the underlying slide system, kept here so users can quickly understand what each family feels like in practice.
 
 ### Academic Defense
 
-![Academic defense preview](assets/previews/01-academic-defense-preview.png)
+![Academic defense preview](assets/previews/01-academic-defense-qwen3-evidence-slide.png)
 
 ### Policy and Governance
 
-![Policy and governance preview](assets/previews/02-policy-and-governance-preview.png)
+![Policy and governance preview](assets/previews/02-policy-governance-plan15-cover-slide.png)
 
 ### Engineering and Technology
 
-![Engineering and technology preview](assets/previews/03-engineering-and-technology-preview.png)
+![Engineering and technology preview](assets/previews/03-engineering-quadcopter-advantage-grid-slide.png)
 
 ### Theory and Coursework
 
-![Theory and coursework preview](assets/previews/04-theory-and-coursework-preview.png)
+![Theory and coursework preview](assets/previews/04-theory-marx-labor-process-slide.png)
 
 ### Innovation Roadshow
 
-![Innovation roadshow preview](assets/previews/05-innovation-roadshow-preview.png)
+![Innovation roadshow preview](assets/previews/05-innovation-aerospace-capability-matrix-slide.png)
 
 ### Community Portfolio
 
-![Community portfolio preview](assets/previews/06-community-portfolio-preview.png)
+![Community portfolio preview](assets/previews/06-community-eevee-evolutions-grid-slide.png)
 
 ## What Makes This Different
 
@@ -168,11 +180,11 @@ That makes it especially useful if you:
 The repository is intentionally small:
 
 - `SKILL.md`: trigger rules and workflow
-- `references/`: the actual routing logic and family definitions
-- `assets/previews/`: visual preview boards for the six families
+- `references/`: the actual routing logic, now split by family instead of one oversized table
+- `assets/previews/`: real preview slides for the six families
 - `agents/openai.yaml`: UI metadata
 
-If you want to use it, place the repository in your Codex skills folder and invoke `$html-slide-template-library`.
+The point is not to ship a pile of templates. The point is to give Codex a reliable decision layer before generation.
 
 ## Best Paired With
 
@@ -273,6 +285,16 @@ Codex 不会马上写 HTML。
 4. 你可以选一个，或者主副两个混合，也可以直接让 Codex 选最稳妥的。
 5. 选定之后，再进入真正的 slide 生成。
 
+## 安装 Prompt
+
+如果你想让 Codex 直接把这个仓库装成可用 skill，最省事的方式不是自己解释目录，而是直接给它一句明确指令。
+
+可以直接用这句：
+
+```text
+Install https://github.com/Zhang-P-S/html-slide-template-library as a local Codex skill, make it available as $html-slide-template-library, and use it as a template-routing layer before generating any slide deck.
+```
+
 ## 适合怎么问
 
 下面这些问法都很适合触发这个 skill：
@@ -309,33 +331,33 @@ Codex 不会马上写 HTML。
 
 适合图鉴、收藏、角色展示、社群活动、目录化内容、作品集和 fandom 场景。
 
-## 预览总览
+## 真实预览
 
-下面这 6 张预览板代表了这个 skill 的六大顶层方向。
+下面这 6 张不是 AI 拼出来的情绪板，而是这套 slide 系统里真实产出的页面截图。它们的作用不是“证明好看”，而是让用户一眼看出每个方向的落点和语法。
 
 ### 学术答辩类
 
-![学术答辩类预览](assets/previews/01-academic-defense-preview.png)
+![学术答辩类预览](assets/previews/01-academic-defense-qwen3-evidence-slide.png)
 
 ### 党政政策类
 
-![党政政策类预览](assets/previews/02-policy-and-governance-preview.png)
+![党政政策类预览](assets/previews/02-policy-governance-plan15-cover-slide.png)
 
 ### 工程技术类
 
-![工程技术类预览](assets/previews/03-engineering-and-technology-preview.png)
+![工程技术类预览](assets/previews/03-engineering-quadcopter-advantage-grid-slide.png)
 
 ### 理论课程类
 
-![理论课程类预览](assets/previews/04-theory-and-coursework-preview.png)
+![理论课程类预览](assets/previews/04-theory-marx-labor-process-slide.png)
 
 ### 创新路演类
 
-![创新路演类预览](assets/previews/05-innovation-roadshow-preview.png)
+![创新路演类预览](assets/previews/05-innovation-aerospace-capability-matrix-slide.png)
 
 ### 社群作品集类
 
-![社群作品集类预览](assets/previews/06-community-portfolio-preview.png)
+![社群作品集类预览](assets/previews/06-community-eevee-evolutions-grid-slide.png)
 
 ## 它和“模板仓库”有什么不同
 
@@ -359,11 +381,11 @@ Codex 不会马上写 HTML。
 仓库结构本身很克制：
 
 - `SKILL.md`：定义这个 skill 何时触发、如何工作
-- `references/`：六大类与具体路由规则
-- `assets/previews/`：六类总览预览板
+- `references/`：按家族拆开的路由规则，不再是一张大总表
+- `assets/previews/`：六类真实预览截图
 - `agents/openai.yaml`：界面元数据
 
-如果你要用它，把仓库放进 Codex 的 skills 目录后，直接用 `$html-slide-template-library` 调用即可。
+真正有价值的不是文件数，而是它把“先选方向，再生成”这件事固定成了一套稳定流程。
 
 ## 最适合和谁搭配
 
